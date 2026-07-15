@@ -325,7 +325,7 @@
         lcdColor: "#111b11",
         decorHTML: `
           <div class="absolute -top-[14px] left-14 flex gap-2 z-0 pointer-events-auto">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-8 h-[16px] bg-gradient-to-b from-white via-[#e2e8f0] to-[#94a3b8] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_white] border-t border-x border-slate-400/80"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] bg-gradient-to-b from-[#a1a1aa] via-[#71717a] to-[#4b5563] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600"></button>
             <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700"></button>
           </div>
           <div class="absolute -top-[10px] left-[150px] w-8 h-3 bg-zinc-600 rounded-t-sm border-t border-zinc-400 shadow-inner"></div>
@@ -346,7 +346,7 @@
       },
       'kitsch': {
         name: "Kitsch",
-        model: "MODEL: GM-99X",
+        model: "galaxy message", // 피드백 반영: 모델명 소문자 galaxy message 매핑
         bodyClass: "bg-gradient-to-tr from-[#ebd2f8] via-[#f9d7df] to-[#d6e7fd] border-[4px] border-white/80 shadow-[inset_0_4px_6px_rgba(255,255,255,0.7),0_25px_50px_-12px_rgba(0,0,0,0.5)]",
         bezelClass: "bg-gradient-to-b from-[#fbf6fc] to-[#ebdcf8] border-2 border-[#dabbe9]/80 shadow-md",
         lcdBg: "#dbebd6",
@@ -355,9 +355,7 @@
           <div class="absolute inset-0 w-full h-full rounded-[44px] overflow-hidden">
             <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
               <path d="M 415.0,110.0 L 432.6,160.7 L 486.3,161.8 L 443.5,194.3 L 459.1,245.7 L 415.0,215.0 L 370.9,245.7 L 386.5,194.3 L 343.7,161.8 L 397.4,160.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
-              
               <path d="M 295.0,200.0 L 305.6,230.4 L 337.8,231.1 L 312.1,250.6 L 321.5,281.4 L 295.0,263.0 L 268.5,281.4 L 277.9,250.6 L 252.2,231.1 L 284.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
-              
               <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
             </svg>
           </div>
@@ -367,10 +365,11 @@
           </div>
         `,
         buttonsHTML: `
-          <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
+          <div class="w-1/3 text-left flex items-center pl-2">
+            <i class="fa-solid fa-moon text-[#73469e] text-sm drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"></i>
+          </div>
+          <div class="w-2/3 text-right pr-4">
+            <span class="text-[12px] font-mono font-black text-[#73469e] tracking-widest drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">POCKET BELL</span>
           </div>
         `
       }
