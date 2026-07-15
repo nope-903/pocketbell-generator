@@ -299,7 +299,7 @@
         bezelClass: "bg-gradient-to-b from-[#1c1d22] to-[#0c0d10] border-2 border-black/80 shadow-2xl",
         lcdBg: "#73ab73",
         lcdColor: "#0a1f0a",
-        decorHTML: ``, // 피드백 반영: 측면 회색 버튼 장식 완전 삭제 완료
+        decorHTML: ``,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-white">
             <span class="font-sans font-black tracking-tighter text-base italic border-b-2 border-white leading-none">T<sub class="text-[8px] font-bold">M</sub></span>
@@ -321,10 +321,11 @@
         bezelClass: "bg-gradient-to-r from-[#111214] to-[#131416] border-2 border-black/90",
         lcdBg: "#8f9c8d",
         lcdColor: "#111b11",
+        // 피드백 반영: 상단 버튼 순서를 왼쪽부터 [빨간색 | 회색] 순서로 완벽히 정렬 교체
         decorHTML: `
           <div class="absolute -top-[14px] left-14 flex gap-2 z-0 pointer-events-auto">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] bg-gradient-to-b from-[#a1a1aa] via-[#71717a] to-[#4b5563] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600"></button>
             <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] bg-gradient-to-b from-[#ef4444] via-[#dc2626] to-[#991b1b] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] bg-gradient-to-b from-[#a1a1aa] via-[#71717a] to-[#4b5563] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600"></button>
           </div>
         `,
         brandLogoHTML: `
@@ -344,7 +345,6 @@
       'kitsch': {
         name: "Kitsch",
         model: "galaxy message",
-        // 피드백 반영: 상단 왼쪽에 누락되어 undefined를 만들던 브랜드 로고 자리에 굵은 기울임꼴 보라색 초승달 POCKET BELL 적용
         brandLogoHTML: `
           <div class="flex items-center gap-1.5 text-[#73469e] font-black italic text-[11px] tracking-wider drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
             <i class="fa-solid fa-moon"></i>
@@ -368,10 +368,11 @@
             <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[29px] font-bold text-[#5c3384] tracking-widest drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Pocket Bell</span>
           </div>
         `,
+        // 피드백 반영: 컬러풀했던 키치 버튼들을 깔끔하고 입체적인 3D 흰색 그라데이션 버튼으로 원상 복원
         buttonsHTML: `
           <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#f3e8ff] via-[#e9d5ff] to-[#c084fc] shadow-[0_4px_6px_rgba(0,0,0,0.15),inset_0_1px_1px_white] border border-purple-300"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#fdf2f8] via-[#fbcfe8] to-[#f472b6] shadow-[0_4px_6px_rgba(0,0,0,0.15),inset_0_1px_1px_white] border border-pink-300"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#ffffff] via-[#f4f4f5] to-[#e4e4e7] shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#ffffff] via-[#f4f4f5] to-[#e4e4e7] shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300"></button>
           </div>
         `
       }
