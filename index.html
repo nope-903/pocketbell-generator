@@ -65,6 +65,9 @@
     .lcd-screen {
       position: relative;
       overflow: hidden;
+      box-shadow: 
+        inset 4px 4px 12px rgba(0, 0, 0, 0.75), 
+        inset -2px -2px 6px rgba(255,255,255,0.2);
     }
 
     /* LCD 픽셀 격자 텍스처 (도트 패턴) */
@@ -143,12 +146,12 @@
   <main class="w-full max-w-6xl mx-auto my-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
     
     <!-- LEFT: 3D Device Rendering Viewport -->
-    <section class="lg:col-span-7 flex flex-col items-center justify-center p-2 overflow-visible">
+    <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
       
       <div id="capture-area" class="p-10 rounded-[56px] bg-transparent flex items-center justify-center overflow-visible">
         
-        <!-- HARDWARE BODY (가장자리 회색 깨짐 버그 완전 패치: 테일윈드 그라데이션 제거 및 하드코딩된 표준 CSS 그라데이션 주입) -->
-        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500" style="background: linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #111111 100%) !important; border: 4px solid #2d2d2d !important; border-radius: 48px !important;">
+        <!-- HARDWARE BODY (가장자리 깨짐 버그 완전 패치: 테일윈드 class 대신 html2canvas 전용 CSS 하드코딩 그라데이션 주입) -->
+        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500" style="overflow: visible;">
           
           <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px]"></div>
 
@@ -160,10 +163,10 @@
 
           <!-- LCD BEZEL (가장자리 깨짐 방지: 테일윈드 그라데이션 제거) -->
           <div class="w-full px-1.5 z-10 overflow-visible">
-            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 overflow-visible" style="background: linear-gradient(180deg, #111 0%, #000 100%) !important; border: 2px solid #000 !important; border-radius: 26px !important;">
+            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 overflow-visible">
               
-              <!-- LCD SCREEN (화면 처짐 버그 완전 패치: Flex layout 제거 및 absolute positioning 기반 정밀 픽셀 배치 시스템 도입) -->
-              <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 relative overflow-hidden" style="background-color: #8f9c8d; border-radius: 8px !important; box-sizing: border-box;">
+              <!-- LCD SCREEN (처짐 버그 완전 패치: absolute positioning 기반 정밀 픽셀 배치 시스템 도입) -->
+              <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 relative" style="box-sizing: border-box;">
                 <div class="lcd-glass-reflection"></div>
 
                 <!-- LCD Top row: Status Signals & Clock (위치 및 행간 강제 고정) -->
@@ -179,8 +182,8 @@
                     <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-bell text-[8px]"></i></span>
                   </div>
                   
-                  <!-- Integrated Clock Display (처짐 방지를 위한 line-height 고정) -->
-                  <div class="flex items-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace; height: 16px; display: inline-flex; align-items: center; justify-content: center;">
+                  <!-- Integrated Clock Display -->
+                  <div class="flex items-center justification-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace; height: 16px; display: inline-flex; align-items: center; justify-content: center;">
                     <i class="fa-regular fa-clock text-[8px] opacity-70" style="position: relative; top: 0.5px;"></i>
                     <span id="lcd-clock-display" class="tracking-widest" style="line-height: 1; display: inline-block;">12:00</span>
                   </div>
@@ -191,9 +194,9 @@
                 </div>
 
                 <!-- LCD Message Rows (처짐 방지: 고정 픽셀 배치 및 line-height 강제 매핑) -->
-                <div class="z-10 text-center" style="position: absolute; top: 40px; left: 12px; right: 12px; height: 48px; display: block; overflow: visible;">
+                <div class="z-10 text-center" style="position: absolute; top: 38px; left: 12px; right: 12px; height: 48px; display: block; overflow: visible;">
                   <div id="lcd-line-1" class="lcd-text text-base sm:text-lg font-bold leading-none w-full" style="height: 24px; line-height: 24px; vertical-align: top; display: block;">
-                    緊急呼出
+                    緊急呼출
                   </div>
                   <div id="lcd-line-2" class="lcd-text text-base sm:text-lg font-bold leading-none w-full font-mono" style="height: 24px; line-height: 24px; vertical-align: top; display: block;">
                     889-9191
@@ -239,7 +242,7 @@
             <label class="text-xs font-bold text-slate-400">첫 번째 줄 (가타카나 / 한자 / 영문)</label>
             <span class="text-[10px] font-mono text-slate-600" id="count-1">4 / 15</span>
           </div>
-          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼출" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
+          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼出" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
         </div>
 
         <div>
@@ -324,8 +327,8 @@
         name: "Telemessage",
         model: "Multi Message TM-95",
         // 가장자리 회색 깨짐 버그 차단: 테일윈드 class 대신 html2canvas 전용 CSS 하드코딩 그라데이션 주입
-        bodyStyle: "background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%) !important; border-color: rgba(37, 114, 168, 0.4) !important;",
-        bezelStyle: "background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%) !important; border-color: rgba(0, 0, 0, 0.8) !important;",
+        bodyStyle: "background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%) !important; background-color: #0f3d5c !important; border: 4px solid rgba(37, 114, 168, 0.4);",
+        bezelStyle: "background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%) !important; background-color: #121212 !important; border: 2px solid rgba(0, 0, 0, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
         lcdBg: "#73ab73",
         lcdColor: "#0a1f0a",
         decorHTML: `
@@ -349,8 +352,8 @@
         name: "Poke Bell",
         model: "RC-101 CLASSIC",
         // 가장자리 회색 깨짐 버그 차단: 테일윈드 class 대신 html2canvas 전용 CSS 하드코딩 그라데이션 주입
-        bodyStyle: "background: linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #111111 100%) !important; border-color: #2d2d2d !important;",
-        bezelStyle: "background: linear-gradient(180deg, #111 0%, #000 100%) !important; border-color: #000 !important;",
+        bodyStyle: "background: linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #111111 100%) !important; background-color: #151619 !important; border: 4px solid rgba(113, 113, 122, 0.4);",
+        bezelStyle: "background: linear-gradient(90deg, #111214 0%, #131416 100%) !important; background-color: #121212 !important; border: 2px solid rgba(0, 0, 0, 0.9); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
         lcdBg: "#8f9c8d",
         lcdColor: "#111b11",
         decorHTML: `
@@ -359,8 +362,6 @@
             <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%) !important; background-color: #dc2626 !important;"></button>
             <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600" style="background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #4b5563 100%) !important; background-color: #71717a !important;"></button>
           </div>
-          <!-- 꼬임 고리 액세서리 추가 -->
-          <div class="absolute -bottom-[20px] left-10 w-6 h-10 border-4 border-zinc-500 rounded-b-full shadow-[0_5px_10px_rgba(0,0,0,0.6)]" style="mix-blend-mode: overlay;"></div>
         `,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-[#42b9d0] font-sans font-black text-sm tracking-tight italic">
@@ -380,8 +381,8 @@
         name: "Kitsch",
         model: "galaxy message",
         // 가장자리 회색 깨짐 버그 차단: 테일윈드 class 대신 html2canvas 전용 CSS 하드코딩 그라데이션 주입
-        bodyStyle: "background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%) !important; border-color: rgba(255, 255, 255, 0.8) !important;",
-        bezelStyle: "background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%) !important; border-color: rgba(218, 187, 233, 0.8) !important;",
+        bodyStyle: "background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%) !important; background-color: #f9d7df !important; border: 4px solid rgba(255, 255, 255, 0.8);",
+        bezelStyle: "background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%) !important; background-color: #fbf6fc !important; border: 2px solid rgba(218, 187, 233, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 -2px 5px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(255, 255, 255, 0.2), 0 -1px 2px rgba(0, 0, 0, 0.05);",
         lcdBg: "#dbebd6",
         lcdColor: "#223525",
         decorHTML: `
@@ -586,11 +587,10 @@
 
       // 로딩 애니메이션 마운트
       const loader = document.createElement('div');
-      loader.className = "fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3 p-6 text-center";
+      loader.className = "fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3";
       loader.innerHTML = `
         <i class="fa-solid fa-compact-disc animate-spin text-4xl text-pink-500"></i>
         <span class="font-bold tracking-widest">초고해상도 투명 PNG 그래픽 합성 중...</span>
-        <p class="text-xs text-slate-400">가장자리 회색 깨짐 및 텍스트 처짐 버그를 우회하기 위해 인코딩 방식이 최적화되었습니다.</p>
       `;
       document.body.appendChild(loader);
 
@@ -611,7 +611,7 @@
           lcdScreen.classList.remove('is-exporting');
 
           const a = document.createElement('a');
-          a.download = `retro_pager_3d_${currentDevice}.png`;
+          a.download = `retro_pager_3d_${currentDevice}_${Date.now().toString().slice(-5)}.png`;
           a.href = canvas.toDataURL('image/png');
           a.click();
           document.body.removeChild(loader);
