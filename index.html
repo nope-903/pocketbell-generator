@@ -9,10 +9,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Google Fonts for Retro typography -->
+  <!-- Google Fonts for Retro & Y2K Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Galmuri9:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Galmuri9:wght@400;700&family=Share+Tech+Mono&family=Great+Vibes&display=swap" rel="stylesheet">
   
   <!-- html2canvas Library for Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -76,8 +76,8 @@
       display: block;
       position: absolute;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(0, 0, 0, 0.14) 50%, rgba(0, 0, 0, 0) 50%), 
-                  linear-gradient(90deg, rgba(0, 0, 0, 0.14) 50%, rgba(0, 0, 0, 0) 50%);
+      background: linear-gradient(rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0) 50%), 
+                  linear-gradient(90deg, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0) 50%);
       background-size: 2.5px 2.5px;
       z-index: 5;
       pointer-events: none;
@@ -92,7 +92,7 @@
     .tactile-btn:active {
       transform: translateY(2px);
       box-shadow: 
-        inset 0 1px 3px rgba(0, 0, 0, 0.8),
+        inset 0 1px 3px rgba(0, 0, 0, 0.4),
         0 1px 1px rgba(255, 255, 255, 0.1) !important;
     }
 
@@ -149,9 +149,9 @@
           <div id="device-decorations"></div>
 
           <!-- TOP BRAND PANEL -->
-          <div class="flex justify-between items-center px-4 pt-1 z-10">
+          <div class="flex justify-between items-center px-5 pt-1 z-10">
             <div id="brand-logo" class="flex items-center"></div>
-            <div id="model-text" class="text-[9px] font-sans font-black tracking-widest text-white/50 uppercase"></div>
+            <div id="model-text" class="text-[9.5px] font-mono font-black tracking-widest text-white/50 uppercase"></div>
           </div>
 
           <!-- LCD BEZEL -->
@@ -203,7 +203,7 @@
           </div>
 
           <!-- PHYSICAL KEYPAD PANEL -->
-          <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1.5 z-10"></div>
+          <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1 z-10"></div>
 
         </div>
 
@@ -240,7 +240,7 @@
           <input type="text" id="input-2" oninput="syncLCD()" maxlength="15" value="889-9191" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
         </div>
 
-        <!-- NEW: Retro Clock Settings -->
+        <!-- Retro Clock Settings -->
         <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
           <div class="flex justify-between items-center">
             <label class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
@@ -321,7 +321,7 @@
         decorHTML: `
           <!-- 하드웨어 측면 경첩 걸쇠 구조물 -->
           <div class="absolute -left-[5px] top-[110px] w-[5px] h-10 bg-zinc-400 rounded-l-md border-y border-l border-zinc-600 shadow-inner"></div>
-          <div class="absolute left-3 top-3 w-5 h-5 flex items-center justify-center">
+          <div class="absolute left-4 top-4 w-5 h-5 flex items-center justify-center">
             <span class="text-[10px] text-zinc-900/40 font-black">◀</span>
           </div>
         `,
@@ -331,19 +331,12 @@
             <span class="font-sans font-bold text-[10.5px] italic tracking-tight opacity-90">Telemessage</span>
           </div>
         `,
-        // 3D 메탈릭 알약형 버튼 3개 장착
+        // 오리지널 텔레메세지 가로형 타원 스위치 레이아웃
         buttonsHTML: `
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-black text-zinc-400">💡</span>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-black text-zinc-400">▼ ▲</span>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-black text-zinc-400">◀ ▶</span>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
+          <div class="flex justify-center gap-6 w-full">
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#f2f2f2] via-[#d6d6d6] to-[#afafaf] shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#f2f2f2] via-[#d6d6d6] to-[#afafaf] shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-[#f2f2f2] via-[#d6d6d6] to-[#afafaf] shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80"></button>
           </div>
         `
       },
@@ -365,7 +358,6 @@
             <span>RC-101</span>
           </div>
         `,
-        // NTT 특유의 인쇄 디자인
         buttonsHTML: `
           <div class="w-1/3 text-left">
             <span class="text-[8.5px] font-sans font-black text-[#42b9d0] tracking-tight flex items-center gap-0.5"><i class="fa-solid fa-circle-nodes"></i> NTT</span>
@@ -377,62 +369,59 @@
       },
       'kitsch': {
         name: "Kitsch",
-        model: "POCKET BELL", // 제작사 명칭 수정 적용
-        // 키치 버전에 어울리는 오로라 글레이즈 핑크&퍼플 펄 바디 3D 하이라이트
-        bodyClass: "bg-gradient-to-tr from-[#ffcbd9] via-[#fbc2eb] to-[#a6c1ee] border-[4px] border-white/60",
-        bezelClass: "bg-gradient-to-br from-[#ffe9f0] to-[#ffd1e1] border-2 border-[#ff9ebb]/70 shadow-lg",
-        lcdBg: "#b5f2ff", // 맑은 민트빛 파스텔 엔젤링 백라이트
-        lcdColor: "#0f2836",
+        model: "MODEL: GM-99X", // 요청하신 가상의 스페셜 모델명 적용
+        // 극도로 은은하고 부드러운 하이틴 오로라 펄 그라데이션 광택 바디
+        bodyClass: "bg-gradient-to-tr from-[#ebd2f8] via-[#f9d7df] to-[#d6e7fd] border-[4px] border-white/80 shadow-[inset_0_4px_6px_rgba(255,255,255,0.7),0_25px_50px_-12px_rgba(0,0,0,0.5)]",
+        bezelClass: "bg-gradient-to-b from-[#fbf6fc] to-[#ebdcf8] border-2 border-[#dabbe9]/80 shadow-md",
+        lcdBg: "#dbebd6", // 레퍼런스 이미지 특유의 살짝 맑은 민트-올리브 빛 패널
+        lcdColor: "#223525",
         decorHTML: `
-          <!-- Y2K 하이틴 박막 데칼 스티커 그래픽 디자인 (체리, 마법의 별) -->
-          <div class="absolute left-5 bottom-3.5 w-12 h-12 opacity-95 pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- 체리 가지와 잎사귀 -->
-              <path d="M40 20 C50 15, 65 30, 68 45" stroke="#4ade80" stroke-width="5" stroke-linecap="round"/>
-              <path d="M22 45 C30 20, 50 15, 40 20" stroke="#4ade80" stroke-width="5" stroke-linecap="round"/>
-              <path d="M42 16 C38 10, 52 6, 50 14 Z" fill="#22c55e" />
-              <!-- 체리 열매 2개 -->
-              <circle cx="22" cy="50" r="14" fill="url(#cherryGrad)" />
-              <circle cx="68" cy="50" r="14" fill="url(#cherryGrad)" />
-              <!-- 체리 반사광 -->
-              <circle cx="18" cy="46" r="4" fill="#ffffff" opacity="0.8"/>
-              <circle cx="64" cy="46" r="4" fill="#ffffff" opacity="0.8"/>
-              <!-- 그라데이션 소스 -->
-              <defs>
-                <radialGradient id="cherryGrad" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stop-color="#ff4d79" />
-                  <stop offset="100%" stop-color="#b3002d" />
-                </radialGradient>
-              </defs>
+          <!-- 고품격 Y2K 'Galaxy Message' 퍼플 라인아트 아트웍 데칼 -->
+          
+          <!-- 좌측 하단 정교한 스타 스파클 라인 아트 -->
+          <div class="absolute left-8 bottom-[75px] sm:bottom-[88px] opacity-80 pointer-events-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]">
+            <svg class="w-[52px] h-[52px] text-[#7c50a4]" viewBox="0 0 100 100" fill="currentColor">
+              <!-- 큰 Y2K 스타 -->
+              <path d="M50 10 C50 35, 35 50, 10 50 C35 50, 50 65, 50 90 C50 65, 65 50, 90 50 C65 50, 50 35, 50 10 Z" />
+              <!-- 내부 화이트 겹쳐짐 효과로 고급화 -->
+              <path d="M50 25 C50 40, 40 50, 25 50 C40 50, 50 60, 50 75 C50 60, 60 50, 75 50 C60 50, 50 40, 50 25 Z" fill="#ebd6ff" />
+              <!-- 작은 4각 별 동반 배치 -->
+              <path d="M15 15 C15 22, 22 25, 25 25 C22 25, 15 28, 15 35 C15 28, 8 25, 5 25 C8 25, 15 22, 15 15 Z" fill="#916cb3" />
             </svg>
           </div>
           
-          <div class="absolute right-4 bottom-3 w-10 h-10 opacity-90 pointer-events-none">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- 반짝이 별무리 -->
-              <path d="M50 15 L56 36 L78 42 L56 48 L50 70 L44 48 L22 42 L44 36 Z" fill="#ffeb3b" />
-              <path d="M20 15 L23 25 L33 28 L23 31 L20 41 L17 31 L7 28 L17 25 Z" fill="#ffffff" />
-              <circle cx="75" cy="20" r="5" fill="#e91e63" />
-              <circle cx="25" cy="65" r="4" fill="#9c27b0" />
+          <!-- 우측 하단 정교한 스타 & 초승달 라인 아트 -->
+          <div class="absolute right-8 bottom-[75px] sm:bottom-[88px] flex items-center gap-1.5 opacity-80 pointer-events-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]">
+            <!-- 미려한 초승달 -->
+            <svg class="w-6 h-6 text-[#7c50a4]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3a9 9 0 1 0 9 9 9.005 9.005 0 0 0-9-9zm.6 15.4a6.4 6.4 0 1 1 5.8-5.8 9.05 9.05 0 0 0-5.8 5.8z" />
+            </svg>
+            <!-- 콤팩트 크로스 스타 -->
+            <svg class="w-5 h-5 text-[#916cb3]" viewBox="0 0 100 100" fill="currentColor">
+              <path d="M50 15 L56 38 L79 44 L56 50 L50 73 L44 50 L21 44 L44 38 Z" />
             </svg>
           </div>
 
-          <!-- 좌상단 보석 하이라이트 돔 파츠 -->
-          <div class="absolute left-4 top-4 w-4 h-4 bg-gradient-to-br from-white to-pink-400 rounded-full border border-pink-300 shadow-[0_2px_4px_rgba(0,0,0,0.15)]"></div>
+          <!-- LCD 하단 영문 필기체 폰트 로고 "Galaxy Message" 배치 -->
+          <div class="absolute bottom-[80px] sm:bottom-[94px] left-0 right-0 flex justify-center items-center pointer-events-none">
+            <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[27px] font-bold text-[#643d8a] tracking-wider drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Galaxy Message</span>
+          </div>
+
+          <!-- 실물 기기 특유의 오동통한 타원형 홈 홀 데탈 (좌측 하단) -->
+          <div class="absolute left-6 bottom-[32px] w-5 h-3.5 bg-[#dbbfe4] rounded-full border border-white/50 shadow-inner opacity-90"></div>
         `,
         brandLogoHTML: `
-          <div class="flex items-center gap-1 text-pink-600">
-            <span class="font-sans font-black italic text-[11px] tracking-wider flex items-center gap-1">
-              <i class="fa-solid fa-heart text-pink-500 animate-pulse text-[9px]"></i> POCKET BELL <i class="fa-solid fa-heart text-pink-500 animate-pulse text-[9px]"></i>
-            </span>
+          <!-- 좌상단 우아한 로고 디자인 -->
+          <div class="flex items-center gap-1 text-[#7c50a4]">
+            <span class="font-sans font-black italic text-[10.5px] tracking-widest"><i class="fa-solid fa-moon text-[9px] mr-1"></i>GALAXY</span>
           </div>
         `,
-        // 골드 크롬 림 마감의 에메랄드/옐로우 주얼 버튼 장착
+        // 텔레메세지 가로형 버튼 구조를 오마주한 고급스러운 글로시 화이트 가로 필형 버튼 배치
         buttonsHTML: `
-          <div class="flex justify-around w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-9 rounded-full bg-gradient-to-b from-yellow-200 via-amber-400 to-yellow-600 text-yellow-950 font-bold flex items-center justify-center text-xs border border-amber-300 shadow-[0_3px_5px_rgba(0,0,0,0.3)]">★</button>
-            <div class="text-[8px] font-black text-pink-700/80 font-mono text-center tracking-tighter">LOVELY BEEPER<br>SWEET HEAVEN</div>
-            <button onclick="playBeep()" class="tactile-btn w-9 h-9 rounded-full bg-gradient-to-b from-pink-200 via-pink-400 to-rose-600 text-rose-950 font-bold flex items-center justify-center text-xs border border-pink-300 shadow-[0_3px_5px_rgba(0,0,0,0.3)]">♪</button>
+          <div class="flex justify-center gap-6 w-full">
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full bg-gradient-to-b from-white via-[#fafafa] to-[#eaeaea] shadow-[0_4px_6px_rgba(130,110,150,0.18),inset_0_1.5px_1px_white] border border-white/95"></button>
           </div>
         `
       }
