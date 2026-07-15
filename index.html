@@ -3,172 +3,198 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real Retro Pocket Bell Generator</title>
+  <title>Real Retro Pocket Bell Emulator Pro</title>
   
+  <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Google Fonts for Retro typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Galmuri9:wght@400;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Galmuri9:wght@400;700&family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
   
+  <!-- html2canvas Library for Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     body {
       font-family: 'Galmuri9', sans-serif;
-      background-color: #0f1016;
+      background-color: #0b0c10;
       background-image: 
-        radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.05) 0, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05) 0, transparent 40%);
+        radial-gradient(circle at 10% 20%, rgba(244, 63, 94, 0.08) 0, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0, transparent 40%);
     }
 
-    /* 리얼 LCD 화면 도트 매트릭스 & 유리 질감 */
+    /* 초극사실 3D 하드웨어 케이스 물리 그림자 */
+    .real-device {
+      box-shadow: 
+        0 30px 70px -15px rgba(0, 0, 0, 0.95),
+        0 15px 30px -10px rgba(0, 0, 0, 0.9),
+        inset 0 4px 5px rgba(255, 255, 255, 0.35),
+        inset 0 -8px 16px rgba(0, 0, 0, 0.7);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+
+    /* 입체감이 살아있는 LCD 외부 베젤 몰딩 */
+    .bezel-3d {
+      box-shadow: 
+        inset 0 4px 10px rgba(0, 0, 0, 0.9),
+        inset 0 -2px 5px rgba(255, 255, 255, 0.15),
+        0 2px 4px rgba(255, 255, 255, 0.1),
+        0 -1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 리얼 글래스 곡면 굴절 반사광 */
+    .lcd-glass-reflection {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(125deg, 
+        rgba(255,255,255,0.28) 0%, 
+        rgba(255,255,255,0.08) 25%, 
+        transparent 45%, 
+        transparent 70%,
+        rgba(255,255,255,0.04) 75%,
+        rgba(255,255,255,0.12) 100%
+      );
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    /* LCD 내부 스크린 깊이 음영 */
     .lcd-screen {
       position: relative;
       overflow: hidden;
-      box-shadow: inset 3px 3px 10px rgba(0, 0, 0, 0.6), inset -2px -2px 5px rgba(255,255,255,0.1);
-      transition: background-color 0.4s ease;
+      box-shadow: 
+        inset 4px 4px 12px rgba(0, 0, 0, 0.75), 
+        inset -2px -2px 6px rgba(255,255,255,0.2);
     }
 
-    /* LCD 마이크로 격자 라인 필터 (도트 질감) */
+    /* LCD 픽셀 격자 텍스처 */
     .lcd-screen::before {
       content: " ";
       display: block;
       position: absolute;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0) 50%), 
-                  linear-gradient(90deg, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0) 50%);
-      background-size: 3px 3px;
+      background: linear-gradient(rgba(0, 0, 0, 0.14) 50%, rgba(0, 0, 0, 0) 50%), 
+                  linear-gradient(90deg, rgba(0, 0, 0, 0.14) 50%, rgba(0, 0, 0, 0) 50%);
+      background-size: 2.5px 2.5px;
       z-index: 5;
       pointer-events: none;
     }
 
-    /* 리얼 글래스 반사광 효과 (Glossy Reflection Overlay) */
-    .lcd-glass-reflection {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 30%, transparent 50%);
-      z-index: 6;
-      pointer-events: none;
+    /* 누르면 들어가는 3D 버튼 반응 */
+    .tactile-btn {
+      position: relative;
+      transition: all 0.05s ease;
+      cursor: pointer;
     }
-
-    /* 텍스트 렌더링 스타일 */
-    .lcd-text {
-      font-family: 'Galmuri9', monospace;
-      letter-spacing: 0.12em;
-      font-weight: 700;
-      text-shadow: 1px 1px 0px rgba(0,0,0,0.15);
-    }
-
-    /* 리얼 3D 가젯 바디 섀도우 */
-    .real-device {
+    .tactile-btn:active {
+      transform: translateY(2px);
       box-shadow: 
-        0 25px 60px -15px rgba(0, 0, 0, 0.95),
-        0 10px 25px -10px rgba(0, 0, 0, 0.8),
-        inset 0 4px 6px rgba(255, 255, 255, 0.25),
-        inset 0 -6px 12px rgba(0, 0, 0, 0.6);
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+        inset 0 1px 3px rgba(0, 0, 0, 0.8),
+        0 1px 1px rgba(255, 255, 255, 0.1) !important;
     }
 
-    /* 백라이트 전원 켜짐 순간 껌벅임 효과 */
+    /* LCD 리얼 껌벅임 효과 */
     @keyframes lcdFlash {
-      0% { opacity: 0.4; filter: brightness(0.5); }
-      30% { opacity: 1; filter: brightness(1.5); }
-      60% { opacity: 0.7; filter: brightness(0.8); }
+      0% { opacity: 0.5; filter: brightness(0.6); }
+      40% { opacity: 1; filter: brightness(1.4); }
+      70% { opacity: 0.8; filter: brightness(0.9); }
       100% { opacity: 1; filter: brightness(1); }
     }
     .lcd-active {
-      animation: lcdFlash 0.5s ease-out forwards;
-    }
-
-    /* 피지컬 키 하향 인터랙션 */
-    .tact-btn {
-      transition: all 0.08s ease;
-      position: relative;
-    }
-    .tact-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      box-shadow: inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 2px rgba(0,0,0,0.4);
-      pointer-events: none;
+      animation: lcdFlash 0.4s ease-out forwards;
     }
   </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col justify-between p-4 md:p-6">
+<body class="text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-6">
 
-  <header class="w-full max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center py-4 border-b border-slate-800/80 mb-6 gap-4">
+  <!-- Header -->
+  <header class="w-full max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center py-4 border-b border-slate-900 mb-6 gap-4">
     <div class="flex items-center gap-3">
-      <span class="text-3xl">📟</span>
+      <span class="text-3xl filter drop-shadow-[0_2px_8px_rgba(236,72,153,0.3)]">📟</span>
       <div>
-        <h1 class="text-2xl font-black tracking-wider text-pink-500">POCKET BELL GENERATOR</h1>
-        <p class="text-xs text-slate-400">High-Fidelity Hardware Emulator</p>
+        <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-400">POCKET BELL EMULATOR</h1>
+        <p class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Professional Retro Device Lab</p>
       </div>
     </div>
     
-    <div class="flex bg-slate-900 p-1.5 rounded-xl border border-slate-800 shadow-inner">
-      <button onclick="changeDevice('telemessage')" id="tab-tele" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-pink-600 text-white shadow">
+    <!-- Device Type Switches -->
+    <div class="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-900 shadow-inner">
+      <button onclick="changeDevice('telemessage')" id="tab-tele" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-pink-600 text-white shadow">
         Telemessage
       </button>
-      <button onclick="changeDevice('pokebell')" id="tab-poke" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 transition-all hover:text-slate-200">
-        Pocket Bell (NTT)
+      <button onclick="changeDevice('pokebell')" id="tab-poke" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 transition-all hover:text-slate-200">
+        Pocket Bell
       </button>
-      <button onclick="changeDevice('kitsch')" id="tab-kitsch" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 transition-all hover:text-slate-200">
-        Kitsch Theme
+      <button onclick="changeDevice('kitsch')" id="tab-kitsch" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 transition-all hover:text-slate-200 font-mono">
+        Kitsch (Y2K)
       </button>
     </div>
   </header>
 
+  <!-- Main Workspace -->
   <main class="w-full max-w-6xl mx-auto my-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
     
+    <!-- LEFT: 3D Device Rendering Viewport -->
     <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
       
-      <div id="capture-area" class="p-8 rounded-[48px] bg-transparent flex items-center justify-center">
+      <div id="capture-area" class="p-10 rounded-[56px] bg-transparent flex items-center justify-center">
         
-        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[270px] sm:h-[310px] rounded-[42px] relative p-5 flex flex-col justify-between">
+        <!-- HARDWARE BODY -->
+        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500">
           
+          <!-- Outer dynamic accessories inside pager -->
           <div id="device-decorations"></div>
 
+          <!-- TOP BRAND PANEL -->
           <div class="flex justify-between items-center px-4 pt-1 z-10">
-            <div id="brand-logo" class="flex items-center">
-              </div>
-            <div id="model-text" class="text-[9px] font-sans font-bold tracking-widest text-white/60 uppercase">
-              </div>
+            <div id="brand-logo" class="flex items-center"></div>
+            <div id="model-text" class="text-[9px] font-sans font-black tracking-widest text-white/50 uppercase"></div>
           </div>
 
-          <div class="w-full px-2 z-10">
-            <div id="lcd-bezel" class="p-3 rounded-[24px] transition-colors duration-500">
+          <!-- LCD BEZEL -->
+          <div class="w-full px-1.5 z-10">
+            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500">
               
+              <!-- LCD SCREEN -->
               <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 flex flex-col justify-between">
                 <div class="lcd-glass-reflection"></div>
 
-                <div class="flex justify-between items-center text-[10px] font-bold opacity-80 z-10">
+                <!-- LCD Top row: Status Signals & Clock -->
+                <div class="flex justify-between items-center text-[10px] font-bold opacity-85 z-10 font-mono">
                   <div class="flex items-center gap-1.5" id="lcd-indicators-left">
                     <span id="lcd-sig"><i class="fa-solid fa-signal text-[8px]"></i></span>
-                    <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-music text-[8px]"></i></span>
+                    <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-bell text-[8px]"></i></span>
                   </div>
-                  <div class="text-[8px] tracking-wider uppercase font-mono" id="lcd-num-guide">
-                    </div>
+                  
+                  <!-- Integrated Clock Display -->
+                  <div class="flex items-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace;">
+                    <i class="fa-regular fa-clock text-[8px] opacity-70"></i>
+                    <span id="lcd-clock-display" class="tracking-widest">12:00</span>
+                  </div>
+
                   <div class="flex items-center gap-1" id="lcd-indicators-right">
                     <span id="lcd-bat"><i class="fa-solid fa-battery-three-quarters text-[9px]"></i></span>
                   </div>
                 </div>
 
-                <div class="flex-1 flex flex-col justify-center items-center gap-1 z-10">
-                  <div id="lcd-line-1" class="lcd-text text-base sm:text-lg text-center w-full truncate">
+                <!-- LCD Message Rows -->
+                <div class="flex-1 flex flex-col justify-center items-center gap-0.5 z-10">
+                  <div id="lcd-line-1" class="lcd-text text-base sm:text-lg text-center w-full truncate font-bold">
                     緊急呼出
                   </div>
-                  <div id="lcd-line-2" class="lcd-text text-base sm:text-lg text-center w-full truncate">
+                  <div id="lcd-line-2" class="lcd-text text-base sm:text-lg text-center w-full truncate font-bold">
                     889-9191
                   </div>
                 </div>
 
-                <div class="flex justify-between items-center text-[9px] font-bold opacity-80 z-10 font-mono">
-                  <div id="lcd-foot-left">▲ ♫</div>
-                  <div id="lcd-foot-mid">◀ ▶</div>
-                  <div id="lcd-foot-right">▼</div>
+                <!-- LCD Bottom row: Navigation icons -->
+                <div class="flex justify-between items-center text-[8.5px] font-bold opacity-75 z-10 font-mono">
+                  <div id="lcd-foot-left">◀ 🔈</div>
+                  <div id="lcd-foot-mid" class="tracking-widest text-[7px] opacity-50">▲▼ SELECT</div>
+                  <div id="lcd-foot-right">🔊 ▶</div>
                 </div>
 
               </div>
@@ -176,8 +202,8 @@
             </div>
           </div>
 
-          <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1 z-10">
-            </div>
+          <!-- PHYSICAL KEYPAD PANEL -->
+          <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1.5 z-10"></div>
 
         </div>
 
@@ -185,75 +211,83 @@
       
     </section>
 
-    <section class="lg:col-span-5 bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-5">
+    <!-- RIGHT: Control Station & Form Configuration -->
+    <section class="lg:col-span-5 bg-slate-950 p-6 rounded-3xl border border-slate-900 shadow-2xl space-y-5">
       
-      <div class="border-b border-slate-800 pb-2">
+      <div class="border-b border-slate-900 pb-3">
         <h2 class="text-lg font-black text-pink-500 flex items-center gap-2">
-          <span><i class="fa-solid fa-sliders"></i></span>
-          <span>제어 및 커스텀</span>
+          <span><i class="fa-solid fa-sliders text-base"></i></span>
+          <span>커스텀 제어판</span>
         </h2>
-        <p class="text-[10px] text-slate-500 font-mono tracking-wider">POCKET BELL CONTROLLER</p>
+        <p class="text-[9px] text-slate-500 font-mono tracking-widest uppercase">PAGER STUDIO ENGINE</p>
       </div>
 
-      <div class="space-y-3">
+      <!-- Text Lines Configuration -->
+      <div class="space-y-4">
         <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="text-xs font-bold text-slate-400">첫 번째 줄 (일본어 / 영숫자)</label>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-bold text-slate-400">첫 번째 줄 (가타카나 / 한자 / 영문)</label>
             <span class="text-[10px] font-mono text-slate-600" id="count-1">4 / 15</span>
           </div>
-          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼出" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all">
+          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼出" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
         </div>
 
         <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="text-xs font-bold text-slate-400">두 번째 줄 (숫자 / 문자)</label>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-bold text-slate-400">두 번째 줄 (숫자 / 기호)</label>
             <span class="text-[10px] font-mono text-slate-600" id="count-2">8 / 15</span>
           </div>
-          <input type="text" id="input-2" oninput="syncLCD()" maxlength="15" value="889-9191" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all">
+          <input type="text" id="input-2" oninput="syncLCD()" maxlength="15" value="889-9191" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
+        </div>
+
+        <!-- NEW: Retro Clock Settings -->
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+              <i class="fa-regular fa-clock text-pink-500"></i>
+              <span>호출 시간 설정</span>
+            </label>
+            <button onclick="setCurrentTime()" class="text-[10px] bg-pink-900/40 text-pink-300 border border-pink-700/50 hover:bg-pink-800/50 px-2.5 py-1 rounded-md transition-all font-bold">
+              <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 현재시간 동기화
+            </button>
+          </div>
+          <input type="text" id="input-time" oninput="syncLCD()" maxlength="8" value="12:00" placeholder="예: 12:00 또는 AM 08:30" class="w-full bg-slate-950 border border-slate-850 rounded-xl p-2.5 text-xs text-slate-200 font-mono tracking-widest focus:outline-none focus:border-pink-500 transition-all">
         </div>
       </div>
 
-      <div class="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
-        <span class="text-xs font-bold text-slate-400 block"><i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> 레트로 퀵 프리셋</span>
-        <div class="flex flex-wrap gap-1.5">
-          <button onclick="loadPreset('緊急呼出', '889-9191')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg">긴급호출 (漢字)</button>
-          <button onclick="loadPreset('ｷﾝｷｭｳﾖﾋﾞﾀﾞｼ', '889-9191')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg">긴급호출 (가타카나)</button>
-          <button onclick="loadPreset('1010235', '열렬히 사모해♡')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg">1010235 (열렬사모)</button>
-          <button onclick="loadPreset('8282', '빨리 연락해줘!')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded-lg">8282 (빨리빨리)</button>
-        </div>
-      </div>
-
+      <!-- Signals & Hardware Specs -->
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-[11px] text-slate-400 block mb-1">📶 안테나 수신 감도</label>
-          <select id="config-signal" onchange="applyStatus()" class="w-full bg-slate-950 border border-slate-850 rounded-lg p-2 text-xs text-slate-300 focus:outline-none">
-            <option value="3">강함 (Level 3)</option>
-            <option value="1">약함 (Level 1)</option>
-            <option value="0">서비스 영역 외 (OUT)</option>
+          <label class="text-[11px] text-slate-400 block mb-1">📶 안테나 레벨</label>
+          <select id="config-signal" onchange="applyStatus()" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none">
+            <option value="3">최대 수신 (Level 3)</option>
+            <option value="1">수신 약함 (Level 1)</option>
+            <option value="0">권외 지역 (OUT)</option>
           </select>
         </div>
         <div>
-          <label class="text-[11px] text-slate-400 block mb-1">🔋 배터리 잔량</label>
-          <select id="config-battery" onchange="applyStatus()" class="w-full bg-slate-950 border border-slate-850 rounded-lg p-2 text-xs text-slate-300 focus:outline-none">
-            <option value="full">가득참 (100%)</option>
-            <option value="low">부족함 (10%)</option>
+          <label class="text-[11px] text-slate-400 block mb-1">🔋 배터리 팩</label>
+          <select id="config-battery" onchange="applyStatus()" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none">
+            <option value="full">배터리 가득참 (100%)</option>
+            <option value="low">교체 필요 (10%)</option>
           </select>
         </div>
       </div>
 
-      <div class="space-y-2 pt-3 border-t border-slate-850">
-        <button onclick="exportPNG()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-pink-900/20 transition-all flex items-center justify-center gap-2">
-          <i class="fa-solid fa-camera-retro text-lg"></i>
-          <span>고화질 PNG 이미지로 저장하기</span>
+      <!-- Action Panel -->
+      <div class="space-y-2 pt-3 border-t border-slate-900">
+        <button onclick="exportPNG()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-pink-900/10 transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-camera-retro text-lg animate-bounce"></i>
+          <span>고해상도 투명 PNG 이미지 저장</span>
         </button>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="triggerFlash()" class="bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs py-2.5 rounded-xl flex items-center justify-center gap-2">
+          <button onclick="triggerFlash()" class="bg-slate-900 hover:bg-slate-850 text-slate-300 text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-800">
             <i class="fa-solid fa-arrows-rotate"></i>
-            <span>LCD 재부팅</span>
+            <span>화면 리부팅</span>
           </button>
-          <button onclick="playBeep()" class="bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs py-2.5 rounded-xl flex items-center justify-center gap-2">
-            <i class="fa-solid fa-volume-high"></i>
-            <span>비프 호출음</span>
+          <button onclick="playBeep()" class="bg-slate-900 hover:bg-slate-850 text-slate-300 text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-800">
+            <i class="fa-solid fa-bell-ring text-yellow-500 animate-pulse"></i>
+            <span>벨소리 울리기</span>
           </button>
         </div>
       </div>
@@ -262,188 +296,215 @@
 
   </main>
 
-  <footer class="w-full max-w-6xl mx-auto text-center py-6 border-t border-slate-800/60 mt-8">
-    <p class="text-xs text-slate-500">
-      &copy; 2026 Real Retro Pocket Bell Emulator. Designed for authentic aesthetics.
+  <!-- Footer with Disclaimer -->
+  <footer class="w-full max-w-6xl mx-auto text-center py-6 border-t border-slate-950 mt-8">
+    <p class="text-[10px] text-slate-600 leading-relaxed font-sans">
+      &copy; 2026 Real Retro Pocket Bell Emulator Pro. 본 프로젝트는 비상업적 목적의 레트로 그래픽 에뮬레이터입니다.<br>
+      일부 오마주 디자인과 브랜드 명칭에 대한 권리는 원천 소유사에게 있습니다.
     </p>
   </footer>
 
+  <!-- Core Javascript Program -->
   <script>
     let currentDevice = 'telemessage';
 
-    // 3D 하드웨어 사양 딕셔너리
+    // 3D Hardware Spec Registry
     const devices = {
       'telemessage': {
         name: "Telemessage",
         model: "Multi Message TM-95",
-        // 실제 블루 메탈릭 느낌의 정밀 사출 성형 구현 (입체적 하이라이트)
-        bodyClass: "bg-gradient-to-br from-[#1e6a9f] via-[#104b73] to-[#0c314c] border-[3px] border-[#297eb8]/50",
-        bezelClass: "bg-gradient-to-b from-[#181a1d] to-[#0d0e10] border-2 border-black/40 shadow-2xl",
-        lcdBg: "#7eb57e", // 텔레메세지 특유의 밝은 연두색 LCD
-        lcdColor: "#0f2211",
+        // 깊이 있는 다크 블루 사출 마감
+        bodyClass: "bg-gradient-to-br from-[#1a5b8a] via-[#0f3d5c] to-[#0a2336] border-[4px] border-[#2572a8]/40",
+        bezelClass: "bg-gradient-to-b from-[#1c1d22] to-[#0c0d10] border-2 border-black/80 shadow-2xl",
+        lcdBg: "#73ab73", // 연두색 LCD 내부 패널 색상
+        lcdColor: "#0a1f0a",
         decorHTML: `
-          <div class="absolute -left-[4px] top-[110px] w-[5px] h-9 bg-zinc-400 rounded-l-md border-y border-l border-zinc-600 shadow-inner"></div>
-          <div class="absolute left-3 top-3 w-5 h-5 flex items-center justify-center z-25">
-            <span class="text-[12px] text-zinc-900 font-black">◀</span>
+          <!-- 하드웨어 측면 경첩 걸쇠 구조물 -->
+          <div class="absolute -left-[5px] top-[110px] w-[5px] h-10 bg-zinc-400 rounded-l-md border-y border-l border-zinc-600 shadow-inner"></div>
+          <div class="absolute left-3 top-3 w-5 h-5 flex items-center justify-center">
+            <span class="text-[10px] text-zinc-900/40 font-black">◀</span>
           </div>
         `,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-white">
-            <span class="font-sans font-black tracking-tighter text-base italic border-b border-white leading-none">T<sub class="text-[8px] font-bold">M</sub></span>
-            <span class="font-sans font-bold text-[11px] italic tracking-tight">Telemessage</span>
+            <span class="font-sans font-black tracking-tighter text-base italic border-b-2 border-white leading-none">T<sub class="text-[8px] font-bold">M</sub></span>
+            <span class="font-sans font-bold text-[10.5px] italic tracking-tight opacity-90">Telemessage</span>
           </div>
         `,
-        // 텔레메세지 하단 알약 버튼 3개 + 베젤 램프/스위치 기호 완벽 복각
+        // 3D 메탈릭 알약형 버튼 3개 장착
         buttonsHTML: `
           <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-bold text-zinc-400 flex items-center gap-0.5"><i class="fa-regular fa-lightbulb"></i>💡</span>
-            <button onclick="triggerFlash(); playToggle();" class="tact-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#f2f2f2] to-[#bcbcbc] shadow-md border-b-2 border-zinc-400/80"></button>
+            <span class="text-[8px] font-black text-zinc-400">💡</span>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-bold text-zinc-400">▼ ▲</span>
-            <button onclick="triggerFlash(); playToggle();" class="tact-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#f2f2f2] to-[#bcbcbc] shadow-md border-b-2 border-zinc-400/80"></button>
+            <span class="text-[8px] font-black text-zinc-400">▼ ▲</span>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-[8px] font-bold text-zinc-400">◀ ▶</span>
-            <button onclick="triggerFlash(); playToggle();" class="tact-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#f2f2f2] to-[#bcbcbc] shadow-md border-b-2 border-zinc-400/80"></button>
+            <span class="text-[8px] font-black text-zinc-400">◀ ▶</span>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 sm:w-14 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[#e2e2e2] via-[#b8b8b8] to-[#919191] shadow-[0_3px_5px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-zinc-400/80"></button>
           </div>
         `
       },
       'pokebell': {
         name: "Poke Bell",
-        model: "RC-101",
-        // 리얼 80~90년대 무선 호출기 블랙 텍스처 플라스틱 바디
-        bodyClass: "bg-gradient-to-br from-[#2b2d35] via-[#1a1b20] to-[#0d0e12] border-[3px] border-zinc-700/50",
-        bezelClass: "bg-gradient-to-r from-[#141517] to-[#141517] border-2 border-black/40",
-        lcdBg: "#96a193", // 가라앉은 잿빛-그린 LCD
-        lcdColor: "#171f16",
+        model: "RC-101 CLASSIC",
+        // 거친 결이 살아있는 비즈니스 블랙 매트 바디
+        bodyClass: "bg-gradient-to-br from-[#24252a] via-[#151619] to-[#090a0c] border-[4px] border-zinc-700/40",
+        bezelClass: "bg-gradient-to-r from-[#111214] to-[#131416] border-2 border-black/90",
+        lcdBg: "#8f9c8d", // 오리지널 NTT의 가라앉은 카키 그레이 컬러
+        lcdColor: "#111b11",
         decorHTML: `
+          <!-- 기기 측면 상단 비프 조절 물리 셀렉터 돌기 추가 -->
           <div class="absolute -top-[10px] left-16 w-8 h-3 bg-zinc-600 rounded-t-sm border-t border-zinc-400 shadow-inner"></div>
-          <div class="absolute -top-[12px] left-28 w-12 h-[13px] bg-red-600 rounded-t-md border-t border-red-400 shadow flex items-center justify-center"><span class="text-[7px] text-white font-bold font-mono">ALERT</span></div>
-          <div class="absolute left-3 top-28 w-[5px] h-10 bg-zinc-500 rounded-r-md"></div>
+          <div class="absolute -top-[11px] left-28 w-12 h-3.5 bg-red-600 rounded-t-md border-t border-red-400 shadow flex items-center justify-center"><span class="text-[6.5px] text-white font-bold font-mono">EMERGENCY</span></div>
         `,
         brandLogoHTML: `
-          <div class="flex items-center gap-1 text-[#42b9d0] font-sans font-bold text-[13px] tracking-tight">
+          <div class="flex items-center gap-1 text-[#42b9d0] font-sans font-black text-sm tracking-tight italic">
             <span>RC-101</span>
           </div>
         `,
+        // NTT 특유의 인쇄 디자인
         buttonsHTML: `
           <div class="w-1/3 text-left">
-            <span class="text-[8.5px] font-sans font-bold text-[#42b9d0] tracking-tight flex items-center gap-0.5"><i class="fa-solid fa-circle-notch"></i> NTT</span>
+            <span class="text-[8.5px] font-sans font-black text-[#42b9d0] tracking-tight flex items-center gap-0.5"><i class="fa-solid fa-circle-nodes"></i> NTT</span>
           </div>
           <div class="w-2/3 text-right pr-4">
-            <span class="text-[12px] font-sans font-bold text-slate-400 tracking-wider">POCKET BELL</span>
+            <span class="text-[12px] font-sans font-black text-slate-400 tracking-widest">POCKET BELL</span>
           </div>
         `
       },
       'kitsch': {
         name: "Kitsch",
-        model: "Lovely Star-77",
-        // 파스텔 핑크와 퍼플 매직 그라데이션 광택 투톤 바디
-        bodyClass: "bg-gradient-to-br from-[#ffd6e8] via-[#ffaecb] to-[#c084fc] border-[3px] border-white/60",
-        bezelClass: "bg-[#ffd6e8] border-2 border-[#ff9ebb] shadow-md",
-        lcdBg: "#aef3ff", // 맑은 하늘색-네온 파스텔 백라이트 액정
-        lcdColor: "#152e3b",
+        model: "POCKET BELL", // 제작사 명칭 수정 적용
+        // 키치 버전에 어울리는 오로라 글레이즈 핑크&퍼플 펄 바디 3D 하이라이트
+        bodyClass: "bg-gradient-to-tr from-[#ffcbd9] via-[#fbc2eb] to-[#a6c1ee] border-[4px] border-white/60",
+        bezelClass: "bg-gradient-to-br from-[#ffe9f0] to-[#ffd1e1] border-2 border-[#ff9ebb]/70 shadow-lg",
+        lcdBg: "#b5f2ff", // 맑은 민트빛 파스텔 엔젤링 백라이트
+        lcdColor: "#0f2836",
         decorHTML: `
-          <div class="absolute left-4 bottom-3 w-12 h-12 opacity-80 pointer-events-none">
+          <!-- Y2K 하이틴 박막 데칼 스티커 그래픽 디자인 (체리, 마법의 별) -->
+          <div class="absolute left-5 bottom-3.5 w-12 h-12 opacity-95 pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 0 L58 35 L100 42 L58 50 L50 100 L42 50 L0 42 L42 35 Z" fill="#ffffff" />
+              <!-- 체리 가지와 잎사귀 -->
+              <path d="M40 20 C50 15, 65 30, 68 45" stroke="#4ade80" stroke-width="5" stroke-linecap="round"/>
+              <path d="M22 45 C30 20, 50 15, 40 20" stroke="#4ade80" stroke-width="5" stroke-linecap="round"/>
+              <path d="M42 16 C38 10, 52 6, 50 14 Z" fill="#22c55e" />
+              <!-- 체리 열매 2개 -->
+              <circle cx="22" cy="50" r="14" fill="url(#cherryGrad)" />
+              <circle cx="68" cy="50" r="14" fill="url(#cherryGrad)" />
+              <!-- 체리 반사광 -->
+              <circle cx="18" cy="46" r="4" fill="#ffffff" opacity="0.8"/>
+              <circle cx="64" cy="46" r="4" fill="#ffffff" opacity="0.8"/>
+              <!-- 그라데이션 소스 -->
+              <defs>
+                <radialGradient id="cherryGrad" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#ff4d79" />
+                  <stop offset="100%" stop-color="#b3002d" />
+                </radialGradient>
+              </defs>
             </svg>
           </div>
-          <div class="absolute right-4 bottom-2 w-8 h-8 opacity-70 pointer-events-none">
+          
+          <div class="absolute right-4 bottom-3 w-10 h-10 opacity-90 pointer-events-none">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="30" fill="#f472b6" />
-              <circle cx="30" cy="50" r="30" fill="#f472b6" />
-              <circle cx="70" cy="50" r="30" fill="#f472b6" />
-              <circle cx="50" cy="30" r="30" fill="#f472b6" />
-              <circle cx="50" cy="70" r="30" fill="#f472b6" />
-              <circle cx="50" cy="50" r="10" fill="#fef08a" />
+              <!-- 반짝이 별무리 -->
+              <path d="M50 15 L56 36 L78 42 L56 48 L50 70 L44 48 L22 42 L44 36 Z" fill="#ffeb3b" />
+              <path d="M20 15 L23 25 L33 28 L23 31 L20 41 L17 31 L7 28 L17 25 Z" fill="#ffffff" />
+              <circle cx="75" cy="20" r="5" fill="#e91e63" />
+              <circle cx="25" cy="65" r="4" fill="#9c27b0" />
             </svg>
           </div>
-          <div class="absolute left-4 top-24 w-4 h-3 bg-red-400 rounded-full border border-red-300"></div>
+
+          <!-- 좌상단 보석 하이라이트 돔 파츠 -->
+          <div class="absolute left-4 top-4 w-4 h-4 bg-gradient-to-br from-white to-pink-400 rounded-full border border-pink-300 shadow-[0_2px_4px_rgba(0,0,0,0.15)]"></div>
         `,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-pink-600">
-            <span class="font-sans font-black italic text-xs tracking-wider">♥ Lovely Beep ♥</span>
+            <span class="font-sans font-black italic text-[11px] tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-heart text-pink-500 animate-pulse text-[9px]"></i> POCKET BELL <i class="fa-solid fa-heart text-pink-500 animate-pulse text-[9px]"></i>
+            </span>
           </div>
         `,
+        // 골드 크롬 림 마감의 에메랄드/옐로우 주얼 버튼 장착
         buttonsHTML: `
           <div class="flex justify-around w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tact-btn w-8 h-8 rounded-full bg-gradient-to-b from-yellow-100 to-yellow-300 border border-yellow-400 text-yellow-700 flex items-center justify-center text-xs" title="Reset">★</button>
-            <div class="text-[7.5px] font-bold text-pink-700/80 font-mono text-center">GALAXY MAIL<br>SWEET SYSTEM</div>
-            <button onclick="playBeep()" class="tact-btn w-8 h-8 rounded-full bg-gradient-to-b from-purple-100 to-purple-300 border border-purple-400 text-purple-700 flex items-center justify-center text-xs" title="Alert">♪</button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-9 rounded-full bg-gradient-to-b from-yellow-200 via-amber-400 to-yellow-600 text-yellow-950 font-bold flex items-center justify-center text-xs border border-amber-300 shadow-[0_3px_5px_rgba(0,0,0,0.3)]">★</button>
+            <div class="text-[8px] font-black text-pink-700/80 font-mono text-center tracking-tighter">LOVELY BEEPER<br>SWEET HEAVEN</div>
+            <button onclick="playBeep()" class="tactile-btn w-9 h-9 rounded-full bg-gradient-to-b from-pink-200 via-pink-400 to-rose-600 text-rose-950 font-bold flex items-center justify-center text-xs border border-pink-300 shadow-[0_3px_5px_rgba(0,0,0,0.3)]">♪</button>
           </div>
         `
       }
     };
 
-    // 1. 기종 변경 적용 함수
+    // 1. 기종 변경 메커니즘
     function changeDevice(modelKey) {
       currentDevice = modelKey;
       const spec = devices[modelKey];
 
-      // 활성 탭 UI 갱신
+      // 탭 활성 비주얼 체인지
       ['tele', 'poke', 'kitsch'].forEach(tab => {
-        document.getElementById(`tab-${tab}`).className = "px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
+        document.getElementById(`tab-${tab}`).className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-slate-200";
       });
-      const activeTabMap = { 'telemessage': 'tele', 'pokebell': 'poke', 'kitsch': 'kitsch' };
-      document.getElementById(`tab-${activeTabMap[modelKey]}`).className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-pink-600 text-white shadow";
+      const tabMap = { 'telemessage': 'tele', 'pokebell': 'poke', 'kitsch': 'kitsch' };
+      document.getElementById(`tab-${tabMap[modelKey]}`).className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-pink-600 text-white shadow-lg";
 
-      // 하드웨어 하우징 시각 변화 적용
+      // 하드웨어 아우터 케이싱 클래스 변경
       const bellBody = document.getElementById('bell-body');
-      bellBody.className = `real-device w-[370px] sm:w-[440px] h-[270px] sm:h-[310px] rounded-[42px] relative p-5 flex flex-col justify-between ${spec.bodyClass}`;
+      bellBody.className = `real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500 ${spec.bodyClass}`;
 
-      // 데코레이션 가젯 부품 로드
+      // 데칼 그래픽스 임베드
       document.getElementById('device-decorations').innerHTML = spec.decorHTML;
 
-      // 텍스트/로고 변경
+      // 브랜드 각인 로드
       document.getElementById('brand-logo').innerHTML = spec.brandLogoHTML;
       document.getElementById('model-text').textContent = spec.model;
 
-      // 하단 키패드 스위치 로드
+      // 하단 키패드 인쇄/스위치 배치
       document.getElementById('keypad-panel').innerHTML = spec.buttonsHTML;
 
-      // 베젤 테두리 및 LCD 스키마 갱신
+      // 베젤 프레임 컬러 & LCD 색상 조절
       const lcdBezel = document.getElementById('lcd-bezel');
       const lcdScreen = document.getElementById('lcd-screen');
-      lcdBezel.className = `p-3 rounded-[24px] ${spec.bezelClass}`;
+      lcdBezel.className = `p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 ${spec.bezelClass}`;
       lcdScreen.style.backgroundColor = spec.lcdBg;
       lcdScreen.style.color = spec.lcdColor;
-
-      // LCD 내부 상단 레이아웃 (NTT 특유의 가이드 배치)
-      const numGuide = document.getElementById('lcd-num-guide');
-      if (modelKey === 'pokebell') {
-        numGuide.textContent = "A  1 2 3 4 5 6";
-      } else {
-        numGuide.textContent = "POCKET BELL";
-      }
 
       playToggle();
       triggerFlash();
     }
 
-    // 2. 실시간 LCD 입력 텍스트 동기화
+    // 2. LCD 화면 실시간 렌더링 동기화
     function syncLCD() {
       const val1 = document.getElementById('input-1').value;
       const val2 = document.getElementById('input-2').value;
+      const valTime = document.getElementById('input-time').value;
 
       document.getElementById('count-1').textContent = `${val1.length} / 15`;
       document.getElementById('count-2').textContent = `${val2.length} / 15`;
 
       document.getElementById('lcd-line-1').textContent = val1 !== "" ? val1 : " ";
       document.getElementById('lcd-line-2').textContent = val2 !== "" ? val2 : " ";
+      document.getElementById('lcd-clock-display').textContent = valTime !== "" ? valTime : "--:--";
     }
 
-    // 3. 원클릭 퀵 프리셋 주입
-    function loadPreset(line1, line2) {
-      document.getElementById('input-1').value = line1;
-      document.getElementById('input-2').value = line2;
+    // 3. 현재 실제 로컬 시간 가져와 동기화
+    function setCurrentTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // 0시를 12시로 표시
+      const strTime = `${ampm} ${String(hours).padStart(2, '0')}:${minutes}`;
+      
+      document.getElementById('input-time').value = strTime;
       syncLCD();
-      triggerFlash();
-      playBeep();
+      playToggle();
     }
 
-    // 4. 안테나 / 배터리 가시성 변형
+    // 4. 안테나 및 배터리 센서 기호 제어
     function applyStatus() {
       const sig = document.getElementById('config-signal').value;
       const bat = document.getElementById('config-battery').value;
@@ -456,7 +517,7 @@
       } else if (sig === "1") {
         sigEl.innerHTML = `<i class="fa-solid fa-rss text-[8px]"></i>`;
       } else {
-        sigEl.innerHTML = `<span class="text-[7.5px] border border-current px-0.5 rounded leading-none scale-90">OUT</span>`;
+        sigEl.innerHTML = `<span class="text-[7px] border border-current px-0.5 rounded leading-none scale-90">OUT</span>`;
       }
 
       if (bat === "full") {
@@ -466,15 +527,15 @@
       }
     }
 
-    // 5. LCD 켜짐 펄스 애니메이션 구동
+    // 5. 화면 깜빡임 리셋 플래시
     function triggerFlash() {
       const lcd = document.getElementById('lcd-screen');
       lcd.classList.remove('lcd-active');
-      void lcd.offsetWidth; // Force Reflow
+      void lcd.offsetWidth; // Reflow 트리거
       lcd.classList.add('lcd-active');
     }
 
-    // 6. Web Audio API 기반 버저 사운드 에뮬레이팅
+    // 6. 음향 재생 모듈 (웹 오디오 API 오실레이터)
     let audioCtx = null;
 
     function playToggle() {
@@ -487,14 +548,14 @@
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(3000, now);
+        osc.frequency.setValueAtTime(3200, now);
 
         gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.08, now + 0.002);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        gain.gain.linearRampToValueAtTime(0.06, now + 0.001);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
 
         osc.start(now);
-        osc.stop(now + 0.05);
+        osc.stop(now + 0.04);
       } catch(e){}
     }
 
@@ -510,17 +571,17 @@
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(2600, time);
+          osc.frequency.setValueAtTime(2500, time);
 
           gain.gain.setValueAtTime(0, time);
-          gain.gain.linearRampToValueAtTime(0.18, time + 0.01);
-          gain.gain.exponentialRampToValueAtTime(0.001, time + duration - 0.01);
+          gain.gain.linearRampToValueAtTime(0.15, time + 0.005);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + duration - 0.005);
 
           osc.start(time);
           osc.stop(time + duration);
         }
 
-        // 클래식 수신 비프 리듬 (삐빅- 삐빅-)
+        // 클래식 무선 수신 리듬 멜로디 (삐-빅, 삐-빅)
         beep(now, 0.12);
         beep(now + 0.15, 0.12);
         beep(now + 0.4, 0.12);
@@ -528,42 +589,43 @@
       } catch(e){}
     }
 
-    // 7. html2canvas 고품질 PNG 다운로드 프로세스
+    // 7. 초고화질 무배경 투명 PNG 인코딩 저장
     function exportPNG() {
       const captureArea = document.getElementById('capture-area');
 
-      // 로딩 위젯 부착
+      // 로딩 창 부착
       const loader = document.createElement('div');
-      loader.className = "fixed inset-0 bg-black/80 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3";
+      loader.className = "fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3";
       loader.innerHTML = `
-        <i class="fa-solid fa-spinner animate-spin text-3xl text-pink-500"></i>
-        <span class="font-bold tracking-wider">포켓벨 고화질 투명 이미지 인코딩 중...</span>
+        <i class="fa-solid fa-compact-disc animate-spin text-4xl text-pink-500"></i>
+        <span class="font-bold tracking-widest">초고해상도 투명 PNG 그래픽 합성 중...</span>
       `;
       document.body.appendChild(loader);
 
       setTimeout(() => {
         html2canvas(captureArea, {
-          backgroundColor: null, // 완전한 투명 배경으로 출력하여 굿즈 제작/합성 용이
-          scale: 3,             // 3배 확대 초고해상도 렌더링 적용
+          backgroundColor: null, // 무배경 투명 오버레이 렌더링
+          scale: 4,             // 4배율의 극단적 울트라 픽셀 렌더링
           logging: false,
           useCORS: true
         }).then(canvas => {
           const a = document.createElement('a');
-          a.download = `retro_pocketbell_${Date.now().toString().slice(-6)}.png`;
+          a.download = `3d_pager_${currentDevice}_${Date.now().toString().slice(-5)}.png`;
           a.href = canvas.toDataURL('image/png');
           a.click();
           document.body.removeChild(loader);
         }).catch(err => {
           console.error(err);
           document.body.removeChild(loader);
-          alert("이미지 변환 중 오류가 발생했습니다.");
+          alert("렌더링 도중 기술적 에러가 발생했습니다.");
         });
       }, 500);
     }
 
     window.onload = function() {
+      // 시작 시 현재 시간 자동 동기화 셋팅
+      setCurrentTime();
       changeDevice('telemessage');
-      syncLCD();
       applyStatus();
     }
   </script>
