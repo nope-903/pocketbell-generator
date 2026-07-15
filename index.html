@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -70,7 +71,7 @@
         inset -2px -2px 6px rgba(255,255,255,0.2);
     }
 
-    /* LCD 픽셀 격자 텍스처 */
+    /* LCD 픽셀 격자 텍스처 (도트 패턴) */
     .lcd-screen::before {
       content: " ";
       display: block;
@@ -81,6 +82,14 @@
       background-size: 2.5px 2.5px;
       z-index: 5;
       pointer-events: none;
+    }
+
+    /* 이미지 저장 시 도트 및 어두운 레이어 임시 해제용 크로스 필터 */
+    .is-exporting::before {
+      display: none !important;
+    }
+    .is-exporting .lcd-glass-reflection {
+      display: none !important;
     }
 
     /* 누르면 들어가는 3D 버튼 반응 */
@@ -143,62 +152,64 @@
       <div id="capture-area" class="p-10 rounded-[56px] bg-transparent flex items-center justify-center">
         
         <!-- HARDWARE BODY -->
-        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500">
+        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500" style="background-color: #1e1e1e;">
           
           <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px]"></div>
 
           <!-- TOP BRAND PANEL -->
           <div class="flex justify-between items-center px-5 pt-1 z-10">
             <div id="brand-logo" class="flex items-center"></div>
-            <div id="model-text" class="text-[9.5px] font-mono font-black tracking-widest text-white/50 uppercase"></div>
+            <div id="model-text" class="text-[9.5px] font-mono font-black tracking-widest uppercase"></div>
           </div>
 
           <!-- LCD BEZEL -->
           <div class="w-full px-1.5 z-10">
-            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500">
+            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500" style="background-color: #121212;">
               
               <!-- LCD SCREEN -->
               <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 flex flex-col justify-between" style="box-sizing: border-box;">
                 <div class="lcd-glass-reflection"></div>
 
                 <!-- LCD Top row: Status Signals & Clock -->
-                <div class="flex justify-between items-center text-[10px] font-bold opacity-85 z-10 font-mono" style="height: 14px; line-height: 14px;">
-                  <div class="flex items-center gap-1.5" id="lcd-indicators-left">
-                    <span id="lcd-sig" class="inline-block">
+                <div class="flex justify-between items-center text-[10px] font-bold opacity-85 z-10 font-mono" style="height: 18px; line-height: 18px; box-sizing: border-box; overflow: visible;">
+                  <div class="flex items-center gap-1.5" id="lcd-indicators-left" style="height: 18px; display: flex; align-items: center;">
+                    <span id="lcd-sig" class="inline-block" style="display: inline-flex; align-items: flex-end; height: 10px;">
                       <div class="flex items-end gap-[1px] h-[9px]">
                         <div class="w-[2px] h-[3px] bg-current"></div>
                         <div class="w-[2px] h-[6px] bg-current"></div>
                         <div class="w-[2px] h-[9px] bg-current"></div>
                       </div>
                     </span>
-                    <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-bell text-[8px]"></i></span>
+                    <span id="lcd-sound" class="animate-pulse" style="display: inline-block; vertical-align: middle;"><i class="fa-solid fa-bell text-[8.5px]"></i></span>
                   </div>
                   
                   <!-- Integrated Clock Display -->
-                  <div class="flex items-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace;">
-                    <i class="fa-regular fa-clock text-[8px] opacity-70"></i>
-                    <span id="lcd-clock-display" class="tracking-widest">12:00</span>
+                  <div class="flex items-center justify-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace; height: 16px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fa-regular fa-clock text-[8px] opacity-70" style="margin-top: 1px;"></i>
+                    <span id="lcd-clock-display" class="tracking-widest" style="line-height: 12px; display: inline-block;">12:00</span>
                   </div>
 
-                  <div class="flex items-center gap-1" id="lcd-indicators-right">
-                    <span id="lcd-bat"><i class="fa-solid fa-battery-three-quarters text-[9px]"></i></span>
+                  <div class="flex items-center gap-1" id="lcd-indicators-right" style="height: 18px; display: flex; align-items: center;">
+                    <span id="lcd-bat" style="display: inline-block; vertical-align: middle;"><i class="fa-solid fa-battery-three-quarters text-[9.5px]"></i></span>
                   </div>
                 </div>
 
                 <!-- LCD Message Rows (화면 잘림 및 렌더러 버그 완전 패치) -->
-                <div class="z-10 flex flex-col justify-center items-center" style="height: 52px; margin-top: 3px; margin-bottom: 3px; box-sizing: border-box;">
-                  <div id="lcd-line-1" class="lcd-text text-base sm:text-lg text-center w-full font-bold" style="line-height: 24px; height: 24px; overflow: visible;">
-                    緊急呼出
+                <div class="z-10 text-center" style="height: 48px; box-sizing: border-box; margin-top: 2px; margin-bottom: 2px; display: block; overflow: visible;">
+                  <!-- 첫번째 라인 (정밀 세로 정렬 및 잘림 제로) -->
+                  <div class="w-full font-bold" style="height: 24px; line-height: 24px; display: block; overflow: visible;">
+                    <span id="lcd-line-1" class="lcd-text text-base sm:text-lg" style="display: inline-block; line-height: 24px; vertical-align: top;">緊急呼出</span>
                   </div>
-                  <div id="lcd-line-2" class="lcd-text text-base sm:text-lg text-center w-full font-bold" style="line-height: 24px; height: 24px; overflow: visible;">
-                    889-9191
+                  <!-- 두번째 라인 -->
+                  <div class="w-full font-bold" style="height: 24px; line-height: 24px; display: block; overflow: visible;">
+                    <span id="lcd-line-2" class="lcd-text text-base sm:text-lg" style="display: inline-block; line-height: 24px; vertical-align: top;">889-9191</span>
                   </div>
                 </div>
 
                 <!-- LCD Bottom row -->
-                <div class="flex justify-between items-center text-[8.5px] font-bold opacity-75 z-10 font-mono" style="height: 12px; line-height: 12px; box-sizing: border-box;">
+                <div class="flex justify-between items-center text-[8.5px] font-bold opacity-75 z-10 font-mono" style="height: 12px; line-height: 12px; box-sizing: border-box; overflow: visible;">
                   <div id="lcd-foot-left" class="w-8"></div>
-                  <div id="lcd-foot-mid" class="tracking-widest text-[7.5px] opacity-40">▲ M O D E ▼</div>
+                  <div id="lcd-foot-mid" class="tracking-widest text-[7.5px] opacity-40" style="line-height: 12px;">▲ M O D E ▼</div>
                   <div id="lcd-foot-right" class="w-8 text-right"></div>
                 </div>
 
@@ -313,16 +324,18 @@
   <script>
     let currentDevice = 'pokebell';
 
-    // 3D Hardware Spec Registry (그라데이션 버그 완벽 대처를 위해 CSS 변수를 타지 않는 표준 inline-gradient 스타일 도입)
+    // 3D Hardware Spec Registry
     const devices = {
       'telemessage': {
         name: "Telemessage",
         model: "Multi Message TM-95",
-        bodyStyle: "background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%); border: 4px solid rgba(37, 114, 168, 0.4);",
-        bezelStyle: "background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%); border: 2px solid rgba(0, 0, 0, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
+        bodyStyle: "background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%) !important; background-color: #0f3d5c !important; border: 4px solid rgba(37, 114, 168, 0.4);",
+        bezelStyle: "background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%) !important; background-color: #121212 !important; border: 2px solid rgba(0, 0, 0, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
         lcdBg: "#73ab73",
         lcdColor: "#0a1f0a",
-        decorHTML: ``,
+        decorHTML: `
+          <div class="absolute -left-[5px] top-[110px] w-[5px] h-10 bg-zinc-400 rounded-l-md border-y border-l border-zinc-600 shadow-inner"></div>
+        `,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-white">
             <span class="font-sans font-black tracking-tighter text-base italic border-b-2 border-white leading-none">T<sub class="text-[8px] font-bold">M</sub></span>
@@ -331,24 +344,24 @@
         `,
         buttonsHTML: `
           <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
           </div>
         `
       },
       'pokebell': {
         name: "Poke Bell",
         model: "RC-101 CLASSIC",
-        bodyStyle: "background: linear-gradient(135deg, #24252a 0%, #151619 50%, #090a0c 100%); border: 4px solid rgba(113, 113, 122, 0.4);",
-        bezelStyle: "background: linear-gradient(90deg, #111214 0%, #131416 100%); border: 2px solid rgba(0, 0, 0, 0.9); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
+        bodyStyle: "background: linear-gradient(135deg, #24252a 0%, #151619 50%, #090a0c 100%) !important; background-color: #151619 !important; border: 4px solid rgba(113, 113, 122, 0.4);",
+        bezelStyle: "background: linear-gradient(90deg, #111214 0%, #131416 100%) !important; background-color: #121212 !important; border: 2px solid rgba(0, 0, 0, 0.9); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 -2px 5px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(255, 255, 255, 0.1), 0 -1px 2px rgba(0, 0, 0, 0.5);",
         lcdBg: "#8f9c8d",
         lcdColor: "#111b11",
-        // 버튼 꼬임 현상과 그라데이션 손실을 완벽 차단하기 위해 순수 CSS 스타일 인라인 강제 선언
         decorHTML: `
+          <!-- 빨간색 & 회색 순서 배열 및 인라인 그라데이션 고정 선언 -->
           <div class="absolute -top-[14px] left-14 flex gap-2 z-0 pointer-events-auto">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600" style="background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #4b5563 100%);"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%) !important; background-color: #dc2626 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600" style="background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #4b5563 100%) !important; background-color: #71717a !important;"></button>
           </div>
         `,
         brandLogoHTML: `
@@ -368,14 +381,21 @@
       'kitsch': {
         name: "Kitsch",
         model: "galaxy message",
-        bodyStyle: "background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%); border: 4px solid rgba(255, 255, 255, 0.8); box-shadow: inset 0 4px 6px rgba(255,255,255,0.7), 0 25px 50px -12px rgba(0,0,0,0.5);",
-        bezelStyle: "background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%); border: 2px solid rgba(218, 187, 233, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 -2px 5px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(255, 255, 255, 0.2), 0 -1px 2px rgba(0, 0, 0, 0.05);",
+        brandLogoHTML: `
+          <div class="flex items-center gap-1.5 text-[#73469e] font-black italic text-[11.5px] tracking-wider drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+            <i class="fa-solid fa-moon"></i>
+            <span>POCKET BELL</span>
+          </div>
+        `,
+        bodyStyle: "background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%) !important; background-color: #f9d7df !important; border: 4px solid rgba(255, 255, 255, 0.8); box-shadow: inset 0 4px 6px rgba(255,255,255,0.7), 0 25px 50px -12px rgba(0,0,0,0.5);",
+        bezelStyle: "background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%) !important; background-color: #fbf6fc !important; border: 2px solid rgba(218, 187, 233, 0.8); box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 -2px 5px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(255, 255, 255, 0.2), 0 -1px 2px rgba(0, 0, 0, 0.05);",
         lcdBg: "#dbebd6",
         lcdColor: "#223525",
         decorHTML: `
           <div class="absolute inset-0 w-full h-full rounded-[44px] overflow-hidden">
             <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
               <path d="M 415.0,110.0 L 432.6,160.7 L 486.3,161.8 L 443.5,194.3 L 459.1,245.7 L 415.0,215.0 L 370.9,245.7 L 386.5,194.3 L 343.7,161.8 L 397.4,160.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
+              <!-- 큰 별과 안 겹치도록 X축 마진을 좌측 끝에 완벽 수렴 가둠 -->
               <path d="M 85.0,200.0 L 95.6,230.4 L 127.8,231.1 L 102.1,250.6 L 111.5,281.4 L 85.0,263.0 L 58.5,281.4 L 67.9,250.6 L 42.2,231.1 L 74.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
               <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
             </svg>
@@ -386,17 +406,11 @@
             <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[29px] font-bold text-[#5c3384] tracking-widest drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Pocket Bell</span>
           </div>
         `,
-        brandLogoHTML: `
-          <div class="flex items-center gap-1.5 text-[#73469e] font-black italic text-[11px] tracking-wider drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-            <i class="fa-solid fa-moon"></i>
-            <span>POCKET BELL</span>
-          </div>
-        `,
-        // 3D 화이트 버튼 그라데이션 유지용 인라인 스타일 적용
         buttonsHTML: `
+          <!-- 3D 글로시 화이트 키패드로 원상 복구 완료 -->
           <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%);"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%) !important; background-color: #ffffff !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%) !important; background-color: #ffffff !important;"></button>
           </div>
         `
       }
@@ -568,10 +582,12 @@
       } catch(e){}
     }
 
-    // 7. 초고화질 무배경 투명 PNG 인코딩 저장 (스크롤 보정 및 옵션 튜닝 완료)
+    // 7. 초고화질 무배경 투명 PNG 인코딩 저장 (스크롤 보정 및 변환 버그 완전 패치)
     function exportPNG() {
       const captureArea = document.getElementById('capture-area');
+      const lcdScreen = document.getElementById('lcd-screen');
 
+      // 로딩 애니메이션 마운트
       const loader = document.createElement('div');
       loader.className = "fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3";
       loader.innerHTML = `
@@ -579,6 +595,9 @@
         <span class="font-bold tracking-widest">초고해상도 투명 PNG 그래픽 합성 중...</span>
       `;
       document.body.appendChild(loader);
+
+      // 렌더링 순간에만 격자 노이즈와 어둡게 만드는 원인 필터를 임시 일시 중단시킵니다.
+      lcdScreen.classList.add('is-exporting');
 
       setTimeout(() => {
         html2canvas(captureArea, {
@@ -590,6 +609,9 @@
           scrollX: 0,
           scrollY: -window.scrollY // 스크롤 시 화면 캡처 영역이 미세하게 틀어지는 오프셋 완전 방지
         }).then(canvas => {
+          // 저장 후 필터 복원
+          lcdScreen.classList.remove('is-exporting');
+
           const a = document.createElement('a');
           a.download = `3d_pager_${currentDevice}_${Date.now().toString().slice(-5)}.png`;
           a.href = canvas.toDataURL('image/png');
@@ -597,10 +619,11 @@
           document.body.removeChild(loader);
         }).catch(err => {
           console.error(err);
+          lcdScreen.classList.remove('is-exporting');
           document.body.removeChild(loader);
           alert("렌더링 도중 기술적 에러가 발생했습니다.");
         });
-      }, 500);
+      }, 400);
     }
 
     // 최초 로드 시 'pokebell' 활성화 설정 유지
@@ -612,3 +635,5 @@
   </script>
 </body>
 </html>
+
+```
