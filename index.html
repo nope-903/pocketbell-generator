@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,7 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Galmuri9:wght@400;700&family=Share+Tech+Mono&family=Great+Vibes&display=swap" rel="stylesheet">
   
-  <!-- ⚠️ 주의: html2canvas 라이브러리는 더 이상 사용하지 않습니다. -->
+  <!-- html2canvas Library for Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     body {
@@ -25,13 +27,36 @@
         radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0, transparent 40%);
     }
 
+    /* 캡처 렌더러 호환성 100% 보장 정형 3D 바디 텍스처 */
+    .body-telemessage {
+      background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%) !important;
+      border: 4px solid rgba(37, 114, 168, 0.4) !important;
+    }
+    .bezel-telemessage {
+      background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%) !important;
+      border: 2px solid rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .body-pokebell {
+      background: linear-gradient(135deg, #24252a 0%, #151619 50%, #090a0c 100%) !important;
+      border: 4px solid rgba(113, 113, 122, 0.4) !important;
+    }
+    .bezel-pokebell {
+      background: linear-gradient(90deg, #111214 0%, #131416 100%) !important;
+      border: 2px solid rgba(0, 0, 0, 0.9) !important;
+    }
+
+    .body-kitsch {
+      background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%) !important;
+      border: 4px solid rgba(255, 255, 255, 0.8) !important;
+    }
+    .bezel-kitsch {
+      background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%) !important;
+      border: 2px solid rgba(218, 187, 233, 0.8) !important;
+    }
+
     /* 초극사실 3D 하드웨어 케이스 물리 그림자 */
     .real-device {
-      box-shadow: 
-        0 30px 70px -15px rgba(0, 0, 0, 0.95),
-        0 15px 30px -10px rgba(0, 0, 0, 0.9),
-        inset 0 4px 5px rgba(255, 255, 255, 0.35),
-        inset 0 -8px 16px rgba(0, 0, 0, 0.7);
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
     }
 
@@ -64,15 +89,10 @@
     .lcd-screen {
       position: relative;
       overflow: hidden;
-      box-shadow: 
-        inset 4px 4px 12px rgba(0, 0, 0, 0.75), 
-        inset -2px -2px 6px rgba(255,255,255,0.2);
     }
 
     /* LCD 픽셀 격자 텍스처 (도트 패턴) */
-    .lcd-screen::before {
-      content: " ";
-      display: block;
+    .lcd-screen-grid {
       position: absolute;
       top: 0; left: 0; bottom: 0; right: 0;
       background: linear-gradient(rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0) 50%), 
@@ -139,77 +159,94 @@
     <!-- LEFT: 3D Device Rendering Viewport -->
     <section class="lg:col-span-7 flex flex-col items-center justify-center p-2">
       
-      <!-- ⚠️ 이미지 캡처 대상 영역 -->
-      <div id="capture-area" class="p-10 rounded-[56px] bg-transparent flex items-center justify-center overflow-visible">
+      <!-- html2canvas 캡처 시 외각 그림자와 돌출 단추들이 밀리지 않도록 고정된 래퍼 셋업 -->
+      <div id="capture-area" class="p-10 rounded-[56px] bg-transparent flex items-center justify-center" style="overflow: visible;">
         
-        <!-- HARDWARE BODY -->
-        <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500">
+        <!-- 하드웨어 그림자 연산 버그를 피하기 위해 본체에서 그림자 레이어 분리 래핑 -->
+        <div id="bell-shadow-wrapper" class="rounded-[48px] relative" style="box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.95), 0 15px 30px -10px rgba(0, 0, 0, 0.9); overflow: visible;">
           
-          <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px]"></div>
+          <!-- HARDWARE BODY -->
+          <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500" style="overflow: visible;">
+            
+            <!-- [html2canvas 버그 퇴치용 핵심] 배경과 그라데이션이 겹쳐 찢어지는 문제를 피하기 위해 투명 3D Inset 깊이 음영 레이어 완벽 분리 독립 선언 -->
+            <div id="bell-inner-shadow" class="absolute inset-0 rounded-[44px] pointer-events-none z-30" style="box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.35), inset 0 -8px 16px rgba(0, 0, 0, 0.75); box-sizing: border-box;"></div>
 
-          <!-- TOP BRAND PANEL -->
-          <div class="flex justify-between items-center px-5 pt-1 z-10">
-            <div id="brand-logo" class="flex items-center"></div>
-            <div id="model-text" class="text-[9.5px] font-mono font-black tracking-widest uppercase"></div>
-          </div>
+            <!-- 데칼 무늬용 독립 가두기 레이어 -->
+            <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px] overflow-hidden z-20"></div>
 
-          <!-- LCD BEZEL -->
-          <div class="w-full px-1.5 z-10">
-            <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 overflow-hidden">
-              
-              <!-- LCD SCREEN -->
-              <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 flex flex-col justify-between" style="box-sizing: border-box;">
-                <div class="lcd-glass-reflection"></div>
+            <!-- TOP BRAND PANEL -->
+            <div class="flex justify-between items-center px-5 pt-1 z-10">
+              <div id="brand-logo" class="flex items-center"></div>
+              <div id="model-text" class="text-[9.5px] font-mono font-black tracking-widest uppercase"></div>
+            </div>
 
-                <!-- LCD Top row: Status Signals & Clock -->
-                <div class="flex justify-between items-center text-[10px] font-bold opacity-85 z-10 font-mono" style="height: 14px; line-height: 14px;">
-                  <div class="flex items-center gap-1.5" id="lcd-indicators-left">
-                    <span id="lcd-sig" class="inline-block">
-                      <div class="flex items-end gap-[1px] h-[9px]">
-                        <div class="w-[2px] h-[3px] bg-current"></div>
-                        <div class="w-[2px] h-[6px] bg-current"></div>
-                        <div class="w-[2px] h-[9px] bg-current"></div>
-                      </div>
-                    </span>
-                    <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-bell text-[8px]"></i></span>
-                  </div>
+            <!-- LCD BEZEL -->
+            <div class="w-full px-1.5 z-10">
+              <div id="lcd-bezel" class="p-3.5 rounded-[26px] bezel-3d transition-colors duration-500">
+                
+                <!-- LCD SCREEN (수직 쏠림 버그 퇴치용 절대정밀 그리드 좌표 설계) -->
+                <div id="lcd-screen" class="lcd-screen lcd-active w-full h-[110px] sm:h-[125px] rounded-lg p-3 relative" style="box-sizing: border-box;">
+                  <!-- 글래스 반사광 -->
+                  <div id="lcd-glass" class="lcd-glass-reflection"></div>
                   
-                  <!-- Integrated Clock Display -->
-                  <div class="flex items-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace;">
-                    <i class="fa-regular fa-clock text-[8px] opacity-70"></i>
-                    <span id="lcd-clock-display" class="tracking-widest">12:00</span>
+                  <!-- 미세 도트 격자 무늬 (다운로드 시 일시 제거를 위한 독립 엘리먼트 분리) -->
+                  <div id="lcd-grid" class="lcd-screen-grid"></div>
+
+                  <!-- LCD 안쪽 3D Inset 음영 분리 레이어 -->
+                  <div id="lcd-shadow" class="absolute inset-0 pointer-events-none z-20 rounded" style="box-shadow: inset 3px 3px 8px rgba(0,0,0,0.6);"></div>
+
+                  <!-- LCD Top row: Status Signals & Clock (세로 위치 및 줄간격 완전 고정) -->
+                  <div class="flex justify-between items-center text-[10px] font-bold opacity-85 z-30 font-mono" style="position: absolute; top: 12px; left: 12px; right: 12px; height: 16px; line-height: 16px; box-sizing: border-box;">
+                    <div class="flex items-center gap-1.5" id="lcd-indicators-left" style="height: 16px; display: flex; align-items: center;">
+                      <span id="lcd-sig" class="inline-block" style="display: inline-flex; align-items: flex-end; height: 9px;">
+                        <div class="flex items-end gap-[1px] h-[9px]">
+                          <div class="w-[2px] h-[3px] bg-current"></div>
+                          <div class="w-[2px] h-[6px] bg-current"></div>
+                          <div class="w-[2px] h-[9px] bg-current"></div>
+                        </div>
+                      </span>
+                      <span id="lcd-sound" class="animate-pulse"><i class="fa-solid fa-bell text-[8px]"></i></span>
+                    </div>
+                    
+                    <!-- Integrated Clock Display -->
+                    <div class="flex items-center justify-center gap-1 bg-black/10 px-2 py-0.5 rounded text-[9.5px]" style="font-family: 'Share Tech Mono', monospace; height: 16px; display: inline-flex; align-items: center; justify-content: center;">
+                      <i class="fa-regular fa-clock text-[8px] opacity-70" style="position: relative; top: 0.5px;"></i>
+                      <span id="lcd-clock-display" class="tracking-widest" style="line-height: 1; display: inline-block;">12:00</span>
+                    </div>
+
+                    <div class="flex items-center gap-1" id="lcd-indicators-right" style="height: 16px; display: flex; align-items: center;">
+                      <span id="lcd-bat"><i class="fa-solid fa-battery-three-quarters text-[9px]"></i></span>
+                    </div>
                   </div>
 
-                  <div class="flex items-center gap-1" id="lcd-indicators-right">
-                    <span id="lcd-bat"><i class="fa-solid fa-battery-three-quarters text-[9px]"></i></span>
+                  <!-- LCD Message Rows (Flexbox 가변성 배제하고 정밀 절대 배치 수치화) -->
+                  <div class="z-30 text-center" style="position: absolute; top: 38px; left: 12px; right: 12px; height: 50px; display: block; overflow: visible; box-sizing: border-box;">
+                    <!-- 첫번째 라인 (수직 정렬 오차 0px 보장) -->
+                    <div class="w-full font-bold text-center" style="height: 25px; line-height: 25px; display: block; overflow: visible;">
+                      <span id="lcd-line-1" class="lcd-text text-base sm:text-lg" style="display: inline-block; line-height: 25px; vertical-align: top;">緊急呼出</span>
+                    </div>
+                    <!-- 두번째 라인 -->
+                    <div class="w-full font-bold text-center" style="height: 25px; line-height: 25px; display: block; overflow: visible;">
+                      <span id="lcd-line-2" class="lcd-text text-base sm:text-lg" style="display: inline-block; line-height: 25px; vertical-align: top;">889-9191</span>
+                    </div>
                   </div>
-                </div>
 
-                <!-- LCD Message Rows (Flex layout 유지) -->
-                <div class="z-10 flex-1 flex flex-col justify-center items-center gap-1 text-center px-2">
-                  <div id="lcd-line-1" class="lcd-text text-base sm:text-lg font-bold leading-tight tracking-wide w-full truncate">
-                    緊急呼出
+                  <!-- LCD Bottom row -->
+                  <div class="flex justify-between items-center text-[8.5px] font-bold opacity-75 z-30 font-mono" style="position: absolute; bottom: 8px; left: 12px; right: 12px; height: 14px; line-height: 14px; box-sizing: border-box;">
+                    <div id="lcd-foot-left" class="w-8"></div>
+                    <div id="lcd-foot-mid" class="tracking-widest text-[7.5px] opacity-40">▲ M O D E ▼</div>
+                    <div id="lcd-foot-right" class="w-8 text-right"></div>
                   </div>
-                  <div id="lcd-line-2" class="lcd-text text-base sm:text-lg font-bold leading-tight tracking-wide w-full truncate font-mono">
-                    889-9191
-                  </div>
-                </div>
 
-                <!-- LCD Bottom row -->
-                <div class="flex justify-between items-center text-[8.5px] font-bold opacity-75 z-10 font-mono" style="height: 12px; line-height: 12px;">
-                  <div id="lcd-foot-left" class="w-8"></div>
-                  <div id="lcd-foot-mid" class="tracking-widest text-[7.5px] opacity-40">▲ M O D E ▼</div>
-                  <div id="lcd-foot-right" class="w-8 text-right"></div>
                 </div>
 
               </div>
-
             </div>
+
+            <!-- PHYSICAL KEYPAD PANEL -->
+            <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1.5 z-10"></div>
+
           </div>
-
-          <!-- PHYSICAL KEYPAD PANEL -->
-          <div id="keypad-panel" class="w-full flex justify-around items-center px-4 pb-1 z-10"></div>
-
         </div>
 
       </div>
@@ -234,7 +271,7 @@
             <label class="text-xs font-bold text-slate-400">첫 번째 줄 (가타카나 / 한자 / 영문)</label>
             <span class="text-[10px] font-mono text-slate-600" id="count-1">4 / 15</span>
           </div>
-          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼出" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
+          <input type="text" id="input-1" oninput="syncLCD()" maxlength="15" value="緊急呼출" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-pink-400 font-bold tracking-wider focus:outline-none focus:border-pink-500 transition-all shadow-inner">
         </div>
 
         <div>
@@ -281,10 +318,9 @@
 
       <!-- Action Panel -->
       <div class="space-y-2 pt-3 border-t border-slate-900">
-        <!-- 📸 새로운 브라우저 화면 캡처 방식 적용 버튼 -->
-        <button onclick="captureScreen()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-pink-900/10 transition-all flex items-center justify-center gap-2">
-          <i class="fa-solid fa-camera text-lg animate-bounce"></i>
-          <span>고해상도 이미지 저장 (사이트 화면 캡처)</span>
+        <button onclick="exportPNG()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-pink-900/10 transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-camera-retro text-lg animate-bounce"></i>
+          <span>고해상도 투명 PNG 이미지 저장</span>
         </button>
         <div class="grid grid-cols-2 gap-2">
           <button onclick="triggerFlash()" class="bg-slate-900 hover:bg-slate-850 text-slate-300 text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-800">
@@ -314,16 +350,18 @@
   <script>
     let currentDevice = 'pokebell';
 
-    // 3D Hardware Spec Registry (그라데이션 및 로고 원복)
+    // 3D Hardware Spec Registry (그라데이션 및 CSS 클리핑 버그 차단 정적 바인딩 클래스 구조화)
     const devices = {
       'telemessage': {
         name: "Telemessage",
         model: "Multi Message TM-95",
-        bodyStyle: "background: linear-gradient(135deg, #1a5b8a 0%, #0f3d5c 50%, #0a2336 100%); border: 4px solid rgba(37, 114, 168, 0.4);",
-        bezelStyle: "background: linear-gradient(180deg, #1c1d22 0%, #0c0d10 100%); border: 2px solid rgba(0, 0, 0, 0.8);",
+        bodyClass: "body-telemessage",
+        bezelClass: "bezel-telemessage",
         lcdBg: "#73ab73",
         lcdColor: "#0a1f0a",
-        decorHTML: ``,
+        decorHTML: `
+          <div class="absolute -left-[5px] top-[110px] w-[5px] h-10 bg-zinc-400 rounded-l-md border-y border-l border-zinc-600 shadow-inner z-10"></div>
+        `,
         brandLogoHTML: `
           <div class="flex items-center gap-1 text-white">
             <span class="font-sans font-black tracking-tighter text-base italic border-b-2 border-white leading-none">T<sub class="text-[8px] font-bold">M</sub></span>
@@ -332,23 +370,24 @@
         `,
         buttonsHTML: `
           <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%);"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.5),inset_0_1px_1px_white] border border-zinc-400/80" style="background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 50%, #afafaf 100%) !important; background-color: #d6d6d6 !important;"></button>
           </div>
         `
       },
       'pokebell': {
         name: "Poke Bell",
         model: "RC-101 CLASSIC",
-        bodyStyle: "background: linear-gradient(135deg, #24252a 0%, #151619 50%, #090a0c 100%); border: 4px solid rgba(113, 113, 122, 0.4);",
-        bezelStyle: "background: linear-gradient(90deg, #111214 0%, #131416 100%); border: 2px solid rgba(0, 0, 0, 0.9);",
+        bodyClass: "body-pokebell",
+        bezelClass: "bezel-pokebell",
         lcdBg: "#8f9c8d",
         lcdColor: "#111b11",
         decorHTML: `
-          <div class="absolute -top-[14px] left-14 flex gap-2 z-0 pointer-events-auto">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600" style="background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #4b5563 100%);"></button>
+          <!-- 3D 돌출 입체 버튼 (빨강 / 회색 순서 보장 및 z-index 부여) -->
+          <div class="absolute -top-[14px] left-14 flex gap-2 z-10 pointer-events-auto">
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-12 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.4)] border-t border-x border-red-700" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #991b1b 100%) !important; background-color: #dc2626 !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-9 h-[16px] rounded-t-md shadow-[0_-3px_6px_rgba(0,0,0,0.5),inset_0_1.5px_1px_rgba(255,255,255,0.2)] border-t border-x border-zinc-600" style="background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #4b5563 100%) !important; background-color: #71717a !important;"></button>
           </div>
         `,
         brandLogoHTML: `
@@ -368,38 +407,43 @@
       'kitsch': {
         name: "Kitsch",
         model: "galaxy message",
-        bodyStyle: "background: linear-gradient(45deg, #ebd2f8 0%, #f9d7df 50%, #d6e7fd 100%); border: 4px solid rgba(255, 255, 255, 0.8);",
-        bezelStyle: "background: linear-gradient(180deg, #fbf6fc 0%, #ebdcf8 100%); border: 2px solid rgba(218, 187, 233, 0.8);",
-        lcdBg: "#dbebd6",
-        lcdColor: "#223525",
-        decorHTML: `
-          <div class="absolute inset-0 w-full h-full rounded-[44px] overflow-hidden">
-            <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
-              <path d="M 415.0,110.0 L 432.6,160.7 L 486.3,161.8 L 443.5,194.3 L 459.1,245.7 L 415.0,215.0 L 370.9,245.7 L 386.5,194.3 L 343.7,161.8 L 397.4,160.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
-              <path d="M 125.0,200.0 L 135.6,230.4 L 167.8,231.1 L 142.1,250.6 L 151.5,281.4 L 125.0,263.0 L 98.5,281.4 L 107.9,250.6 L 82.2,231.1 L 114.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
-              <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
-            </svg>
-          </div>
-          <div class="absolute bottom-[82px] sm:bottom-[96px] left-0 right-0 flex justify-center items-center pointer-events-none">
-            <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[29px] font-bold text-[#5c3384] tracking-widest drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Pocket Bell</span>
-          </div>
-        `,
         brandLogoHTML: `
-          <div class="flex items-center gap-1 text-[#73469e] font-black italic text-xs tracking-wider drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+          <!-- 굵은 이탤릭 초승달 POCKET BELL 적용 -->
+          <div class="flex items-center gap-1.5 text-[#73469e] font-black italic text-[11px] tracking-wider drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]" style="font-weight: 900;">
             <i class="fa-solid fa-moon"></i>
             <span>POCKET BELL</span>
           </div>
         `,
+        bodyClass: "body-kitsch",
+        bezelClass: "bezel-kitsch",
+        lcdBg: "#dbebd6",
+        lcdColor: "#223525",
+        decorHTML: `
+          <div class="absolute inset-0 w-full h-full rounded-[44px] overflow-hidden z-10">
+            <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
+              <path d="M 415.0,110.0 L 432.6,160.7 L 486.3,161.8 L 443.5,194.3 L 459.1,245.7 L 415.0,215.0 L 370.9,245.7 L 386.5,194.3 L 343.7,161.8 L 397.4,160.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
+              <!-- 큰 별과 안 겹치도록 왼쪽 별을 완전히 왼쪽(X=85)으로 이동 -->
+              <path d="M 85.0,200.0 L 95.6,230.4 L 127.8,231.1 L 102.1,250.6 L 111.5,281.4 L 85.0,263.0 L 58.5,281.4 L 67.9,250.6 L 42.2,231.1 L 74.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
+              <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
+            </svg>
+          </div>
+
+          <!-- LCD 하단 영문 필기체 명판 -->
+          <div class="absolute bottom-[82px] sm:bottom-[96px] left-0 right-0 flex justify-center items-center pointer-events-none z-20">
+            <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[29px] font-bold text-[#5c3384] tracking-widest drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Pocket Bell</span>
+          </div>
+        `,
         buttonsHTML: `
+          <!-- 3D 글로시 화이트 입체 키패드로 원상 복구 -->
           <div class="flex justify-center gap-6 w-full">
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%);"></button>
-            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%);"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%) !important; background-color: #ffffff !important;"></button>
+            <button onclick="triggerFlash(); playToggle();" class="tactile-btn w-[70px] sm:w-[85px] h-[16px] sm:h-[18px] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.12),inset_0_1px_1px_white] border border-zinc-300" style="background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 50%, #e4e4e7 100%) !important; background-color: #ffffff !important;"></button>
           </div>
         `
       }
     };
 
-    // 1. 기종 변경 메커니즘 (원본 스타일 복원)
+    // 1. 기종 변경 메커니즘
     function changeDevice(modelKey) {
       currentDevice = modelKey;
       const spec = devices[modelKey];
@@ -411,8 +455,8 @@
       document.getElementById(`tab-${tabMap[modelKey]}`).className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all bg-pink-600 text-white shadow-lg";
 
       const bellBody = document.getElementById('bell-body');
-      bellBody.style.cssText = spec.bodyStyle;
-      bellBody.className = "real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500";
+      bellBody.style.cssText = ""; // 기존 오동작 유발 인라인을 초기화
+      bellBody.className = `real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500 ${spec.bodyClass}`;
 
       document.getElementById('device-decorations').innerHTML = spec.decorHTML;
       document.getElementById('brand-logo').innerHTML = spec.brandLogoHTML;
@@ -422,15 +466,15 @@
       if (modelKey === 'kitsch') {
         modelEl.className = "text-[10px] font-mono font-black tracking-widest text-[#73469e]/80 italic lowercase";
       } else {
-        modelEl.className = "text-[ model-text ] text-[9.5px] font-mono font-black tracking-widest text-white/50 uppercase";
+        modelEl.className = "text-[9.5px] font-mono font-black tracking-widest text-white/50 uppercase";
       }
 
       document.getElementById('keypad-panel').innerHTML = spec.buttonsHTML;
 
       const lcdBezel = document.getElementById('lcd-bezel');
       const lcdScreen = document.getElementById('lcd-screen');
-      lcdBezel.style.cssText = spec.bezelStyle;
-      lcdBezel.className = "p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 overflow-hidden";
+      lcdBezel.style.cssText = "";
+      lcdBezel.className = `p-3.5 rounded-[26px] bezel-3d transition-colors duration-500 ${spec.bezelClass}`;
       
       lcdScreen.style.backgroundColor = spec.lcdBg;
       lcdScreen.style.color = spec.lcdColor;
@@ -565,68 +609,53 @@
       } catch(e){}
     }
 
-    // 📸 7. [새로운 해결책] 브라우저 화면 공유 API를 활용한 고해상도 사이트 화면 캡처
-    async function captureScreen() {
+    // 7. 초고화질 무배경 투명 PNG 인코딩 저장 (스크롤 보정 및 변환 버그 완전 패치)
+    function exportPNG() {
       const captureArea = document.getElementById('capture-area');
-      
-      // 사용자에게 캡처 중임을 알림
+      const lcdScreen = document.getElementById('lcd-screen');
+      const lcdGrid = document.getElementById('lcd-grid');
+      const lcdGlass = document.getElementById('lcd-glass');
+
+      // 로딩 애니메이션 마운트
       const loader = document.createElement('div');
-      loader.className = "fixed inset-0 bg-black/90 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-4 p-6 text-center";
+      loader.className = "fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-50 text-white font-sans text-sm gap-3";
       loader.innerHTML = `
-        <i class="fa-solid fa-camera text-5xl text-pink-500 animate-pulse"></i>
-        <div class="space-y-1">
-          <h3 class="font-black text-lg text-pink-400">초고해상도 화면 캡처 모드</h3>
-          <p class="text-slate-300 leading-relaxed">
-            이제 브라우저의 화면 공유 창이 뜹니다.<br>
-            <strong class="text-white">[현재 탭]</strong> 또는 <strong class="text-white">[이 화면]</strong>을 선택하고 <strong class="text-white">[공유]</strong> 버튼을 눌러주세요.<br>
-            사이트에 보이는 그대로의 깨끗한 이미지가 저장됩니다.
-          </p>
-        </div>
-        <button onclick="document.body.removeChild(this.parentElement)" class="mt-2 text-xs text-slate-500 underline">취소</button>
+        <i class="fa-solid fa-compact-disc animate-spin text-4xl text-pink-500"></i>
+        <span class="font-bold tracking-widest">초고해상도 투명 PNG 그래픽 합성 중...</span>
       `;
       document.body.appendChild(loader);
 
-      try {
-        // 브라우저 화면 공유 스트림 가져오기 (가장 높은 해상도 설정)
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: { 
-            displaySurface: "browser", // 브라우저 탭 캡처 선호
-            width: { ideal: 3840 }, // 4K 해상도 지향
-            height: { ideal: 2160 }
-          },
-          audio: false
+      // 렌더링 순간에만 격자 노이즈와 어둡게 만드는 원인 필터를 임시 일시 중단시킵니다.
+      lcdGrid.style.display = 'none';
+      lcdGlass.style.display = 'none';
+
+      setTimeout(() => {
+        html2canvas(captureArea, {
+          backgroundColor: null,
+          scale: 4, 
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: -window.scrollY // 스크롤 시 화면 캡처 영역이 미세하게 틀어지는 오프셋 완전 방지
+        }).then(canvas => {
+          // 저장 후 필터 복원
+          lcdGrid.style.display = 'block';
+          lcdGlass.style.display = 'block';
+
+          const a = document.createElement('a');
+          a.download = `3d_pager_${currentDevice}_${Date.now().toString().slice(-5)}.png`;
+          a.href = canvas.toDataURL('image/png');
+          a.click();
+          document.body.removeChild(loader);
+        }).catch(err => {
+          console.error(err);
+          lcdGrid.style.display = 'block';
+          lcdGlass.style.display = 'block';
+          document.body.removeChild(loader);
+          alert("렌더링 도중 기술적 에러가 발생했습니다.");
         });
-
-        const video = document.createElement('video');
-        video.srcObject = stream;
-        
-        await video.play(); // 스트림 재생 시작 대기
-
-        // 비디오 스트림의 현재 프레임을 캔버스에 그리기
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // 이미지 파일로 저장
-        const a = document.createElement('a');
-        a.download = `retro_pager_${currentDevice}_site_capture.png`;
-        a.href = canvas.toDataURL('image/png');
-        a.click();
-
-        // 사용한 스트림 및 트랙 정리
-        stream.getTracks().forEach(track => track.stop());
-        document.body.removeChild(loader);
-
-      } catch (err) {
-        console.error("화면 캡처 실패:", err);
-        document.body.removeChild(loader);
-        // 사용자가 취소한 경우가 아니면 에러 메시지 표시
-        if(err.name !== 'NotAllowedError') {
-          alert("화면 캡처에 실패했습니다. 브라우저 설정을 확인하거나 스크린샷 기능을 이용해 주세요.");
-        }
-      }
+      }, 500);
     }
 
     // 최초 로드 시 'pokebell' 활성화 설정 유지
@@ -638,3 +667,4 @@
   </script>
 </body>
 </html>
+
