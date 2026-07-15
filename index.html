@@ -137,7 +137,7 @@
         
         <div id="bell-body" class="real-device w-[370px] sm:w-[440px] h-[275px] sm:h-[315px] rounded-[48px] relative p-6 flex flex-col justify-between transition-all duration-500">
           
-          <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px] overflow-hidden"></div>
+          <div id="device-decorations" class="absolute inset-0 pointer-events-none rounded-[44px]"></div>
 
           <div class="flex justify-between items-center px-5 pt-1 z-10">
             <div id="brand-logo" class="flex items-center"></div>
@@ -352,21 +352,18 @@
         lcdBg: "#dbebd6",
         lcdColor: "#223525",
         decorHTML: `
-          <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
-            <path d="M 410.0,170.0 L 427.6,220.7 L 481.3,221.8 L 438.5,254.3 L 454.1,305.7 L 410.0,275.0 L 365.9,305.7 L 381.5,254.3 L 338.7,221.8 L 392.4,220.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
-            
-            <path d="M 295.0,200.0 L 305.6,230.4 L 337.8,231.1 L 312.1,250.6 L 321.5,281.4 L 295.0,263.0 L 268.5,281.4 L 277.9,250.6 L 252.2,231.1 L 284.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
-            
-            <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
-          </svg>
+          <div class="absolute inset-0 w-full h-full rounded-[44px] overflow-hidden">
+            <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_1.5px_2px_rgba(255,255,255,0.85)]" viewBox="0 0 440 315">
+              <path d="M 415.0,110.0 L 432.6,160.7 L 486.3,161.8 L 443.5,194.3 L 459.1,245.7 L 415.0,215.0 L 370.9,245.7 L 386.5,194.3 L 343.7,161.8 L 397.4,160.7 Z" fill="none" stroke="#73469e" stroke-width="6.5" stroke-linejoin="round" />
+              
+              <path d="M 295.0,200.0 L 305.6,230.4 L 337.8,231.1 L 312.1,250.6 L 321.5,281.4 L 295.0,263.0 L 268.5,281.4 L 277.9,250.6 L 252.2,231.1 L 284.4,230.4 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
+              
+              <path d="M 350.0,250.0 L 359.4,277.1 L 388.0,277.6 L 365.2,294.9 L 373.5,322.4 L 350.0,306.0 L 326.5,322.4 L 334.8,294.9 L 312.0,277.6 L 340.6,277.1 Z" fill="none" stroke="#73469e" stroke-width="4.8" stroke-linejoin="round" />
+            </svg>
+          </div>
 
           <div class="absolute bottom-[82px] sm:bottom-[96px] left-0 right-0 flex justify-center items-center pointer-events-none">
             <span style="font-family: 'Great Vibes', cursive;" class="text-2xl sm:text-[29px] font-bold text-[#5c3384] tracking-widest drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.8)]">Pocket Bell</span>
-          </div>
-        `,
-        brandLogoHTML: `
-          <div class="flex items-center gap-1 text-[#7c50a4]">
-            <span class="font-sans font-black italic text-[11px] tracking-widest"><i class="fa-solid fa-star text-[9px] mr-1"></i>POCKET BELL</span>
           </div>
         `,
         buttonsHTML: `
@@ -440,7 +437,7 @@
       playToggle();
     }
 
-    // 4. 안테나 및 배터리 센서 기호 제어 (피드백 반영: 수신약함 상태도 직관적인 3단 막대 바 형태로 통일 변경)
+    // 4. 안테나 및 배터리 센서 기호 제어
     function applyStatus() {
       const sig = document.getElementById('config-signal').value;
       const bat = document.getElementById('config-battery').value;
